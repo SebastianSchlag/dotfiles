@@ -4,6 +4,7 @@
 (source "marmalade" "http://marmalade-repo.org/packages/")
 
 (depends-on "auto-complete")
+(depends-on "auto-complete-clang-async")
 (depends-on "autopair")
 (depends-on "cask")
 (depends-on "cmake-project")
