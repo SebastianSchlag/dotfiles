@@ -128,16 +128,100 @@
 (setq ecb-tip-of-the-day nil) ;; no ecb tip of the day
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; CC Mode
+;; CC Mode and C/C++ related configurations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'cc-mode)
+
+;; Use Google's C Style:
+(require 'google-c-style)
+(add-hook 'c-mode-common-hook 'google-set-c-style)
+(add-hook 'c-mode-common-hook 'google-make-newline-indent)
+
+;; Allow us to get english language explanations of complex C++ declarations
+;; To use, select a declaration such as "char*(*(*p)[5])(int)", and then type: "C-x cdecl"
+(defun cdecl () 
+  (interactive)
+  (if (eq major-mode 'c++-mode) 
+      (progn (interactive) (shell-command
+                            (concat "c++decl explain \"" (buffer-substring (region-beginning)
+                                                                           (region-end)) "\"")))
+    (progn (interactive) (shell-command
+                          (concat "cdecl explain \"" (buffer-substring (region-beginning)
+                                                                       (region-end)) "\"")))
+    )
+  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Autopair
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'autopair)
-(setq autopair-autowrap t)
+(autopair-global-mode) ;; enable autopair in all buffers
+'(autopair-blink t)
+'(setq autopair-autowrap t)
+
+;; prevent the { (opening brace) character from being autopaired in C++ comments:
+(add-hook 'c++-mode-hook
+          #'(lambda ()
+               (push ?{
+                     (getf autopair-dont-pair :comment))))
+;; disable pair creation when there already is a non-whitespace character after the cursor
+(defun autopair-dont-if-point-non-whitespace (action pair pos-before)
+  (if (or (eq 'opening action) (eq 'insert-quote action))
+      (let ((delete? (save-excursion
+         ;;move forward past the paired element
+         (goto-char (+ (point) 1))
+         (let* ((eol? (eq (point) (line-end-position)))
+                (next-whitespace (save-excursion (search-forward " " (point-max) t) (point)))
+                (next-char-is-whitespace? (eq next-whitespace (+ (point) 1)))
+                (delete? (not (or eol? next-char-is-whitespace?))))
+           delete?))))
+        (if delete? (delete-char 1) 't))
+    't))
+(add-hook 'c++-mode-hook
+          #'(lambda ()
+              (setq autopair-handle-action-fns
+                    (list #'autopair-default-handle-action
+                          #'autopair-dont-if-point-non-whitespace))))
+(add-hook 'c-mode-hook
+          #'(lambda ()
+              (setq autopair-handle-action-fns
+                    (list #'autopair-default-handle-action
+                          #'autopair-dont-if-point-non-whitespace))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Flymake
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'flymake)
+(require 'cmake-project)
+(require 'flymake-cursor)
+
+(setq flymake-gui-warnings-enabled nil)
+(set-variable 'flymake-start-syntax-check-on-newline nil)
+
+(defun maybe-cmake-project-hook ()
+  (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
+(add-hook 'c-mode-hook 'maybe-cmake-project-hook)
+(add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
+
+(defun turn-on-flymake-mode()
+(if (and (boundp 'flymake-mode) flymake-mode)
+    ()
+  (flymake-mode t)))
+
+(add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
+(add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
+
+(defun cmake-project-current-build-command ()
+  "Command line to compile current project as configured in the
+build directory."
+  (concat "cmake --build "
+          (shell-quote-argument (expand-file-name
+                                 cmake-project-build-directory)) " -- -j 1" ))
+
+(defun cmake-project-flymake-init ()
+  (list (executable-find "cmake")
+        (list "--build" (expand-file-name cmake-project-build-directory) "--" "-j" "1" )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yasnipped and auto-complete config
@@ -162,6 +246,25 @@
   (add-to-list 'ac-sources 'ac-source-gtags)
   (add-to-list 'ac-sources 'ac-source-semantic-raw))
 (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Emacs-specific options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(column-number-mode t)
+
+(add-to-list 'load-path "~/.emacs.d")
+(if (functionp 'tool-bar-mode) (tool-bar-mode -1))
+(if (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
+;; Format the title-bar to always include the buffer name
+(setq frame-title-format "%b")
+;; Scroll line by line
+(setq scroll-step 1)
+;; in every buffer, the line which contains the cursor will be fully highlighted
+(global-hl-line-mode 1)
+;; enable inline images:
+(iimage-mode)
+;; treat .h files as c files
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizations
