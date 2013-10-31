@@ -364,6 +364,8 @@ build directory."
 ;; Theme
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-theme 'sanityinc-solarized-light t)
-(ecb-restore-window-sizes)
+
+;; force restore of window sizes
+(run-with-idle-timer 0.2 nil 'ecb-restore-window-sizes)
 
 
