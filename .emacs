@@ -256,8 +256,12 @@ build directory."
 (if (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
 ;; Format the title-bar to always include the buffer name
 (setq frame-title-format "%b")
-;; Scroll line by line
-(setq scroll-step 1)
+;; Scroll line by line - http://stackoverflow.com/questions/3631220/fix-to-get-smooth-scrolling-in-emacs
+(setq redisplay-dont-pause t
+  scroll-margin 1
+  scroll-step 1
+  scroll-conservatively 10000
+  scroll-preserve-screen-position 1)
 ;; in every buffer, the line which contains the cursor will be fully highlighted
 (global-hl-line-mode 1)
 ;; enable inline images:
@@ -268,7 +272,7 @@ build directory."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; remember window size and buffers
+;; window related shortcuts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'windmove)
 (windmove-default-keybindings)
@@ -277,7 +281,14 @@ build directory."
 (global-set-key [M-up] 'windmove-up)              ; move to upper window
 (global-set-key [M-down] 'windmove-down)          ; move to downer window
 
-;;;;;;;;;;;; remember current configuration
+(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
+(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "S-C-<down>") 'shrink-window)
+(global-set-key (kbd "S-C-<up>") 'enlarge-window)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; remember window size and buffers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; remember size of window
 (defun save-framegeometry ()
   "Gets the current frame's geometry and saves to ~/.emacs.d/framegeometry."

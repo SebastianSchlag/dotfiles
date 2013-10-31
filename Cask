@@ -16,6 +16,7 @@
 (depends-on "f")
 (depends-on "flymake-cursor")
 (depends-on "google-c-style")
+(depends-on "magit")
 (depends-on "pallet")
 (depends-on "popup")
 (depends-on "s")
