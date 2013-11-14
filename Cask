@@ -20,4 +20,5 @@
 (depends-on "pallet")
 (depends-on "popup")
 (depends-on "s")
+(depends-on "smooth-scrolling")
 (depends-on "yasnippet")
