@@ -185,6 +185,11 @@
   		   )
   		)
 
+;; enforce column size
+(add-to-list 'load-path
+                     "/home/schlag/.emacs.d/column-enforce-mode")
+(load-file ".emacs.d/column-enforce-mode/column-enforce-mode.el")
+(column-enforce-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Autopair
@@ -397,7 +402,7 @@ build directory."
  '(ecb-options-version "2.40")
  '(ecb-prescan-directories-for-emptyness nil)
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
- '(ecb-source-path (quote ("/home/schlag/repo/" ("/" "/") #("/home/schlag/repo/schlag/src" 0 28 (help-echo "Mouse-2 toggles maximizing, mouse-3 displays a popup-menu")))))
+ '(ecb-source-path (quote ("/home/schlag/repo/" ("/" "/"))))
  '(fci-rule-color "#eee8d5")
  '(show-paren-mode t)
  '(vc-annotate-background nil)
