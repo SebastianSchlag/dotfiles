@@ -151,6 +151,46 @@
     )
   )
 
+;;Create Header Guards with f12
+(global-set-key [f12] 
+  		'(lambda () 
+  		   (interactive)
+  		   (if (buffer-file-name)
+  		       (let*
+  			   ((fName (upcase (file-name-nondirectory (file-name-sans-extension buffer-file-name))))
+  			    (ifDef (concat "#ifndef " fName "_HPP_" "\n#define " fName "_HPP_" "\n"))
+  			    (begin (point-marker))
+  			    )
+  			 (progn
+  					; If less then 5 characters are in the buffer, insert the class definition
+  			   (if (< (- (point-max) (point-min)) 5 )
+  			       (progn
+  				 (insert "\nclass " (capitalize fName) "{\npublic:\n\nprivate:\n\n};\n")
+  				 (goto-char (point-min))
+  				 (next-line-nomark 3)
+  				 (setq begin (point-marker))
+  				 )
+  			     )
+  			   
+  					;Insert the Header Guard
+  			   (goto-char (point-min))
+  			   (insert ifDef)
+  			   (goto-char (point-max))
+  			   (insert "\n#endif" "  // " fName "_HPP_")
+  			   (goto-char begin))
+  			 )
+					;else
+  		     (message (concat "Buffer " (buffer-name) " must have a filename"))
+  		     )
+  		   )
+  		)
+
+;; enforce column size
+(add-to-list 'load-path
+                     "/home/schlag/.emacs.d/column-enforce-mode")
+(load-file ".emacs.d/column-enforce-mode/column-enforce-mode.el")
+(column-enforce-mode)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Autopair
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -269,6 +309,15 @@ build directory."
 ;; treat .h files as c files
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Smooth Scrolling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
+(require 'smooth-scrolling)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time    
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling    
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+(setq scroll-step 1) ;; keyboard scroll one line at a time
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
