@@ -187,8 +187,8 @@
 
 ;; enforce column size
 (add-to-list 'load-path
-                     "/home/schlag/.emacs.d/column-enforce-mode")
-(load-file ".emacs.d/column-enforce-mode/column-enforce-mode.el")
+                     "~/.emacs.d/column-enforce-mode")
+(load-file "~/.emacs.d/column-enforce-mode/column-enforce-mode.el")
 (column-enforce-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

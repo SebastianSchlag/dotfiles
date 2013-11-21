@@ -3,6 +3,7 @@
 (source "elpa" "http://tromey.com/elpa/")
 (source "marmalade" "http://marmalade-repo.org/packages/")
 
+(depends-on "pallet")
 (depends-on "auto-complete")
 (depends-on "auto-complete-clang-async")
 (depends-on "autopair")
