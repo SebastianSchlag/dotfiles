@@ -2,7 +2,7 @@
 ;; Load CEDET - taken from: https://gist.github.com/alexott/3930120
 ;; adapted according to: http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq cedet-root-path (file-name-as-directory "/home/schlag/.emacs.d/cedet-bzr/trunk/"))
+(setq cedet-root-path (file-name-as-directory "~/.emacs.d/cedet-bzr/trunk/"))
 
 (load-file (concat cedet-root-path "cedet-devel-load.el"))
 (add-to-list 'load-path (concat cedet-root-path "contrib"))
@@ -121,7 +121,7 @@
 ;; ECB - Emacs Code Browser
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'load-path
-                     "/home/schlag/.emacs.d/ecb-snap")
+                     "~/.emacs.d/ecb-snap")
 (require 'ecb)
 (require 'ecb-autoloads)
 (setq stack-trace-on-error t)
@@ -187,8 +187,8 @@
 
 ;; enforce column size
 (add-to-list 'load-path
-                     "/home/schlag/.emacs.d/column-enforce-mode")
-(load-file ".emacs.d/column-enforce-mode/column-enforce-mode.el")
+                     "~/.emacs.d/column-enforce-mode")
+(load-file "~/.emacs.d/column-enforce-mode/column-enforce-mode.el")
 (column-enforce-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -411,7 +411,7 @@ Don't mess with special buffers."
  '(ecb-options-version "2.40")
  '(ecb-prescan-directories-for-emptyness nil)
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
- '(ecb-source-path (quote ("/home/schlag/repo/" ("/" "/"))))
+ '(ecb-source-path (quote ("~/repo/" ("/" "/"))))
  '(fci-rule-color "#eee8d5")
  '(show-paren-mode t)
  '(vc-annotate-background nil)
