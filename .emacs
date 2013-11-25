@@ -158,7 +158,7 @@
   		   (if (buffer-file-name)
   		       (let*
   			   ((fName (upcase (file-name-nondirectory (file-name-sans-extension buffer-file-name))))
-  			    (ifDef (concat "#ifndef " fName "_HPP_" "\n#define " fName "_H_" "\n"))
+  			    (ifDef (concat "#ifndef " fName "_H_" "\n#define " fName "_H_" "\n"))
   			    (begin (point-marker))
   			    )
   			 (progn
