@@ -117,6 +117,10 @@
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
 (require 'pallet)
+
+;; packages not handled by cask/pallet are stored in dotfile repo and should be
+;; symlinked to this directory
+(add-to-list 'load-path "~/.emacs.d/external")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ECB - Emacs Code Browser
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -126,6 +130,12 @@
 (require 'ecb-autoloads)
 (setq stack-trace-on-error t)
 (setq ecb-tip-of-the-day nil) ;; no ecb tip of the day
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Advanced Cmake Syntax Highlighting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(autoload 'andersl-cmake-font-lock-activate "andersl-cmake-font-lock" nil t)
+(add-hook 'cmake-mode-hook 'andersl-cmake-font-lock-activate)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CC Mode and C/C++ related configurations
@@ -186,9 +196,7 @@
   		)
 
 ;; enforce column size
-(add-to-list 'load-path
-                     "~/.emacs.d/column-enforce-mode")
-(load-file "~/.emacs.d/column-enforce-mode/column-enforce-mode.el")
+(load-file "~/.emacs.d/external/column-enforce-mode.el")
 (column-enforce-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
