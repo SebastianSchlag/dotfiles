@@ -197,8 +197,8 @@
 
 ;; enforce column size
 (load-file "~/.emacs.d/external/column-enforce-mode.el")
-(column-enforce-mode)
-
+(add-hook 'c-mode-hook '100-column-rule)
+(add-hook 'c++-mode-hook '100-column-rule)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Autopair
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
