@@ -33,7 +33,7 @@
 ;; shows which elements weren't processed by current parser's rules;
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
 ;; shows changes in the text that weren't processed by incremental parser yet.
-(add-to-list 'semantic-default-submodes 'global-semantic-highlight-edits-mode)
+;;(add-to-list 'semantic-default-submodes 'global-semantic-highlight-edits-mode)
 
 ;; Activate semantic
 (semantic-mode 1)
@@ -117,6 +117,10 @@
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
 (require 'pallet)
+
+;; packages not handled by cask/pallet are stored in dotfile repo and should be
+;; symlinked to this directory
+(add-to-list 'load-path "~/.emacs.d/external")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ECB - Emacs Code Browser
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -126,6 +130,12 @@
 (require 'ecb-autoloads)
 (setq stack-trace-on-error t)
 (setq ecb-tip-of-the-day nil) ;; no ecb tip of the day
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Advanced Cmake Syntax Highlighting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(autoload 'andersl-cmake-font-lock-activate "andersl-cmake-font-lock" nil t)
+(add-hook 'cmake-mode-hook 'andersl-cmake-font-lock-activate)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CC Mode and C/C++ related configurations
@@ -158,7 +168,7 @@
   		   (if (buffer-file-name)
   		       (let*
   			   ((fName (upcase (file-name-nondirectory (file-name-sans-extension buffer-file-name))))
-  			    (ifDef (concat "#ifndef " fName "_HPP_" "\n#define " fName "_HPP_" "\n"))
+  			    (ifDef (concat "#ifndef " fName "_H_" "\n#define " fName "_H_" "\n"))
   			    (begin (point-marker))
   			    )
   			 (progn
@@ -176,7 +186,7 @@
   			   (goto-char (point-min))
   			   (insert ifDef)
   			   (goto-char (point-max))
-  			   (insert "\n#endif" "  // " fName "_HPP_")
+  			   (insert "\n#endif" "  // " fName "_H_")
   			   (goto-char begin))
   			 )
 					;else
@@ -186,11 +196,9 @@
   		)
 
 ;; enforce column size
-(add-to-list 'load-path
-                     "~/.emacs.d/column-enforce-mode")
-(load-file "~/.emacs.d/column-enforce-mode/column-enforce-mode.el")
-(column-enforce-mode)
-
+(load-file "~/.emacs.d/external/column-enforce-mode.el")
+(add-hook 'c-mode-hook '100-column-rule)
+(add-hook 'c++-mode-hook '100-column-rule)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Autopair
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -306,9 +314,18 @@ build directory."
 (global-hl-line-mode 1)
 ;; enable inline images:
 (iimage-mode)
-;; treat .h files as c files
-(add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
+;; treat .h and .hpp files as c++ files
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.hpp\\'" . c++-mode))
 
+(defun kill-other-buffers ()
+  "Kill all buffers but the current one.
+Don't mess with special buffers."
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (unless (or (eql buffer (current-buffer)) (not (buffer-file-name buffer)))
+      (kill-buffer buffer))))
+(global-set-key (kbd "C-c k") 'kill-other-buffers)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Smooth Scrolling
@@ -422,6 +439,7 @@ build directory."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 128 :width normal :foundry "unknown" :family "Ubuntu Mono"))))
  '(region ((t (:background "gray90"))))
  '(semantic-highlight-edits-face ((t (:background "gray90"))))
  '(yas-field-highlight-face ((t (:background "gray90")))))
