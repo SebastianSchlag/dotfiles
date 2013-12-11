@@ -2,7 +2,7 @@
 ;; Load CEDET - taken from: https://gist.github.com/alexott/3930120
 ;; adapted according to: http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq cedet-root-path (file-name-as-directory "~/.emacs.d/cedet-bzr/trunk/"))
+(setq cedet-root-path (file-name-as-directory "~/.emacs.d/cedet/"))
 
 (load-file (concat cedet-root-path "cedet-devel-load.el"))
 (add-to-list 'load-path (concat cedet-root-path "contrib"))
@@ -44,7 +44,7 @@
 (require 'semantic/bovine/gcc) ;;find system-wide libs
 
 ;; Add additional directories like this:
-;; (semantic-add-system-include "~/exp/include/boost_1_37" 'c++-mode)
+(semantic-add-system-include "/usr/local/include/boost" 'c++-mode)
 
 ;; customisation of modes
 (defun my-cedet-hook ()
@@ -199,52 +199,58 @@
 (load-file "~/.emacs.d/external/column-enforce-mode.el")
 (add-hook 'c-mode-hook '100-column-rule)
 (add-hook 'c++-mode-hook '100-column-rule)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Autopair
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'autopair)
-(autopair-global-mode) ;; enable autopair in all buffers
-'(autopair-blink t)
-'(setq autopair-autowrap t)
+;; (require 'autopair)
+;; (autopair-global-mode) ;; enable autopair in all buffers
+;; '(autopair-blink t)
+;; '(setq autopair-autowrap t)
 
-;; prevent the { (opening brace) character from being autopaired in C++ comments:
-(add-hook 'c++-mode-hook
-          #'(lambda ()
-               (push ?{
-                     (getf autopair-dont-pair :comment))))
-;; disable pair creation when there already is a non-whitespace character after the cursor
-(defun autopair-dont-if-point-non-whitespace (action pair pos-before)
-  (if (or (eq 'opening action) (eq 'insert-quote action))
-      (let ((delete? (save-excursion
-         ;;move forward past the paired element
-         (goto-char (+ (point) 1))
-         (let* ((eol? (eq (point) (line-end-position)))
-                (next-whitespace (save-excursion (search-forward " " (point-max) t) (point)))
-                (next-char-is-whitespace? (eq next-whitespace (+ (point) 1)))
-                (delete? (not (or eol? next-char-is-whitespace?))))
-           delete?))))
-        (if delete? (delete-char 1) 't))
-    't))
-(add-hook 'c++-mode-hook
-          #'(lambda ()
-              (setq autopair-handle-action-fns
-                    (list #'autopair-default-handle-action
-                          #'autopair-dont-if-point-non-whitespace))))
-(add-hook 'c-mode-hook
-          #'(lambda ()
-              (setq autopair-handle-action-fns
-                    (list #'autopair-default-handle-action
-                          #'autopair-dont-if-point-non-whitespace))))
+;; ;; prevent the { (opening brace) character from being autopaired in C++ comments:
+;; (add-hook 'c++-mode-hook
+;;           #'(lambda ()
+;;                (push ?{
+;;                      (getf autopair-dont-pair :comment))))
+;; ;; disable pair creation when there already is a non-whitespace character after the cursor
+;; (defun autopair-dont-if-point-non-whitespace (action pair pos-before)
+;;   (if (or (eq 'opening action) (eq 'insert-quote action))
+;;       (let ((delete? (save-excursion
+;;          ;;move forward past the paired element
+;;          (goto-char (+ (point) 1))
+;;          (let* ((eol? (eq (point) (line-end-position)))
+;;                 (next-whitespace (save-excursion (search-forward " " (point-max) t) (point)))
+;;                 (next-char-is-whitespace? (eq next-whitespace (+ (point) 1)))
+;;                 (delete? (not (or eol? next-char-is-whitespace?))))
+;;            delete?))))
+;;         (if delete? (delete-char 1) 't))
+;;     't))
+;; (add-hook 'c++-mode-hook
+;;           #'(lambda ()
+;;               (setq autopair-handle-action-fns
+;;                     (list #'autopair-default-handle-action
+;;                           #'autopair-dont-if-point-non-whitespace))))
+;; (add-hook 'c-mode-hook
+;;           #'(lambda ()
+;;               (setq autopair-handle-action-fns
+;;                     (list #'autopair-default-handle-action
+;;                           #'autopair-dont-if-point-non-whitespace))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flymake
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'flymake)
 (require 'cmake-project)
+(require 'flymake)
 (require 'flymake-cursor)
 
-(setq flymake-gui-warnings-enabled nil)
-(set-variable 'flymake-start-syntax-check-on-newline nil)
+(defun maybe-cmake-project-hook ()
+  (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
+(add-hook 'c-mode-hook 'maybe-cmake-project-hook)
+(add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
+
+;; (setq flymake-gui-warnings-enabled nil)
+;; (set-variable 'flymake-start-syntax-check-on-newline nil)
 
 (defun maybe-cmake-project-hook ()
   (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
@@ -252,23 +258,44 @@
 (add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
 
 (defun turn-on-flymake-mode()
-(if (and (boundp 'flymake-mode) flymake-mode)
-    ()
-  (flymake-mode t)))
+  (if (and (boundp 'flymake-mode) flymake-mode)
+      ()
+    (flymake-mode t)))
 
 (add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
 (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
 
-(defun cmake-project-current-build-command ()
-  "Command line to compile current project as configured in the
-build directory."
-  (concat "cmake --build "
-          (shell-quote-argument (expand-file-name
-                                 cmake-project-build-directory)) " -- -j 1" ))
+ (defun cmake-project-current-build-command ()
+    "Command line to compile current project as configured in the
+  build directory."
+    (concat "cmake --build "
+            (shell-quote-argument (expand-file-name
+                                   cmake-project-build-directory)) " -- -j 1" ))
 
 (defun cmake-project-flymake-init ()
-  (list (executable-find "cmake")
-        (list "--build" (expand-file-name cmake-project-build-directory) "--" "-j" "1" )))
+    (list (executable-find "cmake")
+          (list "--build" (expand-file-name cmake-project-build-directory) "--" "-j" "1" )))
+
+;; --------------------------------
+;; --- Recompile Same Directory ---
+;; --------------------------------
+
+(global-set-key [f5] 'compile-again)
+
+(setq compilation-last-buffer nil)
+
+(defun compile-again (pfx)
+  """Run the same compile as the last time.
+If there was no last time, or there is a prefix argument, this acts like
+M-x compile.
+"""
+ (interactive "p")
+ (if (and (eq pfx 1)
+	  compilation-last-buffer)
+     (progn
+       (set-buffer compilation-last-buffer)
+       (revert-buffer t t))
+   (call-interactively 'compile)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yasnipped and auto-complete config
@@ -277,7 +304,6 @@ build directory."
 (yas-global-mode 1)
 
 ;; auto-complete
-(add-to-list 'load-path "~/.emacs.d/")
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (ac-config-default)
@@ -299,7 +325,6 @@ build directory."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (column-number-mode t)
 
-(add-to-list 'load-path "~/.emacs.d")
 (if (functionp 'tool-bar-mode) (tool-bar-mode -1))
 (if (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
 ;; Format the title-bar to always include the buffer name
@@ -326,6 +351,61 @@ Don't mess with special buffers."
     (unless (or (eql buffer (current-buffer)) (not (buffer-file-name buffer)))
       (kill-buffer buffer))))
 (global-set-key (kbd "C-c k") 'kill-other-buffers)
+
+;; split windows horizontally in ediff
+(setq ediff-split-window-function 'split-window-horizontally
+      ediff-window-setup-function 'ediff-setup-windows-multiframe)
+
+;; unique buffer names
+(require 'uniquify)
+
+;; undo and redo window configurations via C-c right C-c left
+(winner-mode 1)
+
+;; if you set it to 'mixed, it will behave like 'parenthesis 
+;; when the matching parenthesis is visible, and like 'expression otherwise.
+(setq show-paren-style 'mixed)
+
+;; make all "yes or no" prompts show "y or n" instead
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; General Keybindings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; magit
+(global-set-key (kbd "<C-f12>") 'magit-status)
+;; cycle through buffers
+(global-set-key (kbd "<C-tab>") 'bury-buffer)
+;; duplicate the current line or region
+(global-set-key (kbd "C-c d") 'duplicate-current-line-or-region)
+;; toggle comment
+(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
+
+;; bind Backspace and Delete keys with M- and C- to special kill functions
+(defun dove-backward-kill-word (&optional arg)
+  "Backward kill word, but do not insert it into kill-ring"
+  (interactive "P")
+  (let (( end (point) )
+        ( beg (progn (backward-word arg) (point)))
+        )
+    (delete-region beg end)
+    )
+  )
+
+(defun dove-forward-kill-word (&optional arg)
+  "Backward kill word, but do not insert it into kill-ring"
+  (interactive "P")
+  (let (( beg (point) )
+        ( end (progn (forward-word arg) (point)))
+        )
+    (delete-region beg end)
+    )
+  )
+
+(global-set-key [(meta backspace)] 'backward-kill-word)
+(global-set-key [(control backspace)] 'dove-backward-kill-word)
+(global-set-key [(meta delete)] 'kill-word)
+(global-set-key [(control delete)] 'dove-forward-kill-word)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Smooth Scrolling
@@ -411,6 +491,8 @@ Don't mess with special buffers."
  '(ac-auto-start 0)
  '(ansi-color-faces-vector [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
+ '(compilation-always-kill t)
+ '(compilation-scroll-output (quote first-error))
  '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
  '(custom-safe-themes (quote ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
  '(ecb-auto-activate t)
@@ -421,7 +503,10 @@ Don't mess with special buffers."
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
  '(ecb-source-path (quote ("~/repo/" ("/" "/"))))
  '(fci-rule-color "#eee8d5")
+ '(flymake-log-level -1)
+ '(magit-restore-window-configuration t)
  '(show-paren-mode t)
+ '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
  '(vc-annotate-background nil)
  '(vc-annotate-color-map (quote ((20 . "#dc322f") (40 . "#cb4b16") (60 . "#b58900") (80 . "#859900") (100 . "#2aa198") (120 . "#268bd2") (140 . "#d33682") (160 . "#6c71c4") (180 . "#dc322f") (200 . "#cb4b16") (220 . "#b58900") (240 . "#859900") (260 . "#2aa198") (280 . "#268bd2") (300 . "#d33682") (320 . "#6c71c4") (340 . "#dc322f") (360 . "#cb4b16"))))
  '(vc-annotate-very-old-color nil))
