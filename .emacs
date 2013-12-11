@@ -279,7 +279,6 @@
 ;; --------------------------------
 ;; --- Recompile Same Directory ---
 ;; --------------------------------
-
 (global-set-key [f5] 'compile-again)
 
 (setq compilation-last-buffer nil)
@@ -329,16 +328,13 @@ M-x compile.
 (if (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
 ;; Format the title-bar to always include the buffer name
 (setq frame-title-format "%b")
-;; Scroll line by line - http://stackoverflow.com/questions/3631220/fix-to-get-smooth-scrolling-in-emacs
-(setq redisplay-dont-pause t
-  scroll-margin 1
-  scroll-step 1
-  scroll-conservatively 10000
-  scroll-preserve-screen-position 1)
+
 ;; in every buffer, the line which contains the cursor will be fully highlighted
 (global-hl-line-mode 1)
+
 ;; enable inline images:
 (iimage-mode)
+
 ;; treat .h and .hpp files as c++ files
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.hpp\\'" . c++-mode))
