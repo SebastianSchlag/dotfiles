@@ -487,6 +487,7 @@ Don't mess with special buffers."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ac-auto-show-menu 1.0)
  '(ac-auto-start 0)
  '(ansi-color-faces-vector [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
@@ -496,7 +497,7 @@ Don't mess with special buffers."
  '(custom-safe-themes (quote ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
  '(ecb-auto-activate t)
  '(ecb-layout-name "leftright2")
- '(ecb-layout-window-sizes (quote (("leftright2" (ecb-directories-buffer-name 0.10344827586206896 . 0.6296296296296297) (ecb-sources-buffer-name 0.10344827586206896 . 0.35185185185185186) (ecb-methods-buffer-name 0.19704433497536947 . 0.6296296296296297) (ecb-history-buffer-name 0.19704433497536947 . 0.35185185185185186)))))
+ '(ecb-layout-window-sizes (quote (("leftright2" (ecb-directories-buffer-name 0.10900473933649289 . 0.6296296296296297) (ecb-sources-buffer-name 0.10900473933649289 . 0.35185185185185186) (ecb-methods-buffer-name 0.14218009478672985 . 0.6296296296296297) (ecb-history-buffer-name 0.14218009478672985 . 0.35185185185185186)))))
  '(ecb-options-version "2.40")
  '(ecb-prescan-directories-for-emptyness nil)
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
