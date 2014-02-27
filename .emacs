@@ -506,6 +506,7 @@ Don't mess with special buffers."
  '(flymake-log-level -1)
  '(magit-gitk-executable nil)
  '(magit-restore-window-configuration nil)
+ '(magit-server-window-for-commit nil)
  '(magit-status-buffer-switch-function (quote switch-to-buffer))
  '(show-paren-mode t)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
