@@ -368,11 +368,50 @@ Don't mess with special buffers."
 ;; don't let the cursor go into minibuffer prompt
 (setq minibuffer-prompt-properties (quote (read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)))
 
-;; fast access to TODO states
+;;;;;;;;;;;;;
+;;; ORG MODE
+;;;;;;;;;;;;;
+;; todo entry changes to done once all children are done
+(defun org-summary-todo (n-done n-not-done)
+  "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+;; useful shortcuts
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+
+;; only show one star for headlines
+(setq org-hide-leading-stars 'hidestars)
+
+;; enter follows links
+(setq org-return-follows-link t)
+
+;; Einen Zeitstempel eintragen, wenn eine Aufgabe als erledigt markiert wird
+(setq org-log-done 'time)
+
+;; Einen eigenen Drawer benutzen
+(setq org-log-into-drawer t)
+
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "|" "DONE(d)")
-	(sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
-	(sequence "|" "CANCELED(c)")))
+ '((sequence "TODO(t)" "STARTED(s!)" "WAITING(w@/!)" "IDEA(i)" "THINK(n)" 
+             "DELEGATED(g@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
+
+;; Farben anpassen
+(setq org-todo-keyword-faces
+      '(("TODO"  . (:foreground "#b70101" :weight bold))
+        ("STARTED"  . (:foreground "#b70101" :weight bold))
+        ("WAITING"  . (:foreground "orange" :weight bold))
+	("IDEA" . (:foreground "#436eee" :weight bold))
+	("THINK" . (:foreground "#ff7f24" :weight bold))
+        ("DONE"  . (:foreground "forestgreen" :weight bold))
+        ("DELEGATED"  . (:foreground "forestgreen" :weight bold))
+        ("CANCELED"  . shadow)))
+
+;; Fast TODO Selection
+(setq org-use-fast-todo-selection t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General Keybindings
