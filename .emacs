@@ -528,6 +528,7 @@ Don't mess with special buffers."
  '(magit-restore-window-configuration nil)
  '(magit-server-window-for-commit nil)
  '(magit-status-buffer-switch-function (quote switch-to-buffer))
+ '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
  '(show-paren-mode t)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
  '(vc-annotate-background nil)
