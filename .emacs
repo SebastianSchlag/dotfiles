@@ -397,7 +397,7 @@ Don't mess with special buffers."
 
 (setq org-todo-keywords
  '((sequence "TODO(t)" "STARTED(s!)" "WAITING(w@/!)" "IDEA(i)" "THINK(n)" 
-             "DELEGATED(g@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
+             "DELEGATED(g@/!)" "|" "DONE(d@/!)" "CANCELED(c@)")))
 
 ;; Farben anpassen
 (setq org-todo-keyword-faces
