@@ -121,6 +121,7 @@
 ;; packages not handled by cask/pallet are stored in dotfile repo and should be
 ;; symlinked to this directory
 (add-to-list 'load-path "~/.emacs.d/external")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ECB - Emacs Code Browser
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -201,100 +202,63 @@
 (add-hook 'c++-mode-hook '100-column-rule)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Autopair
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (require 'autopair)
-;; (autopair-global-mode) ;; enable autopair in all buffers
-;; '(autopair-blink t)
-;; '(setq autopair-autowrap t)
-
-;; ;; prevent the { (opening brace) character from being autopaired in C++ comments:
-;; (add-hook 'c++-mode-hook
-;;           #'(lambda ()
-;;                (push ?{
-;;                      (getf autopair-dont-pair :comment))))
-;; ;; disable pair creation when there already is a non-whitespace character after the cursor
-;; (defun autopair-dont-if-point-non-whitespace (action pair pos-before)
-;;   (if (or (eq 'opening action) (eq 'insert-quote action))
-;;       (let ((delete? (save-excursion
-;;          ;;move forward past the paired element
-;;          (goto-char (+ (point) 1))
-;;          (let* ((eol? (eq (point) (line-end-position)))
-;;                 (next-whitespace (save-excursion (search-forward " " (point-max) t) (point)))
-;;                 (next-char-is-whitespace? (eq next-whitespace (+ (point) 1)))
-;;                 (delete? (not (or eol? next-char-is-whitespace?))))
-;;            delete?))))
-;;         (if delete? (delete-char 1) 't))
-;;     't))
-;; (add-hook 'c++-mode-hook
-;;           #'(lambda ()
-;;               (setq autopair-handle-action-fns
-;;                     (list #'autopair-default-handle-action
-;;                           #'autopair-dont-if-point-non-whitespace))))
-;; (add-hook 'c-mode-hook
-;;           #'(lambda ()
-;;               (setq autopair-handle-action-fns
-;;                     (list #'autopair-default-handle-action
-;;                           #'autopair-dont-if-point-non-whitespace))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flymake
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'cmake-project)
-(require 'flymake)
-(require 'flymake-cursor)
+;; (require 'cmake-project)
+;; (require 'flymake)
+;; (require 'flymake-cursor)
 
-(defun maybe-cmake-project-hook ()
-  (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
-(add-hook 'c-mode-hook 'maybe-cmake-project-hook)
-(add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
+;; (defun maybe-cmake-project-hook ()
+;;   (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
+;; (add-hook 'c-mode-hook 'maybe-cmake-project-hook)
+;; (add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
 
-;; (setq flymake-gui-warnings-enabled nil)
-;; (set-variable 'flymake-start-syntax-check-on-newline nil)
+;; ;; (setq flymake-gui-warnings-enabled nil)
+;; ;; (set-variable 'flymake-start-syntax-check-on-newline nil)
 
-(defun maybe-cmake-project-hook ()
-  (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
-(add-hook 'c-mode-hook 'maybe-cmake-project-hook)
-(add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
+;; (defun maybe-cmake-project-hook ()
+;;   (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
+;; (add-hook 'c-mode-hook 'maybe-cmake-project-hook)
+;; (add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
 
-(defun turn-on-flymake-mode()
-  (if (and (boundp 'flymake-mode) flymake-mode)
-      ()
-    (flymake-mode t)))
+;; (defun turn-on-flymake-mode()
+;;   (if (and (boundp 'flymake-mode) flymake-mode)
+;;       ()
+;;     (flymake-mode t)))
 
-(add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
-(add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
+;; (add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
+;; (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
 
- (defun cmake-project-current-build-command ()
-    "Command line to compile current project as configured in the
-  build directory."
-    (concat "cmake --build "
-            (shell-quote-argument (expand-file-name
-                                   cmake-project-build-directory)) " -- -j 1" ))
+;;  (defun cmake-project-current-build-command ()
+;;     "Command line to compile current project as configured in the
+;;   build directory."
+;;     (concat "cmake --build "
+;;             (shell-quote-argument (expand-file-name
+;;                                    cmake-project-build-directory)) " -- -j 1" ))
 
-(defun cmake-project-flymake-init ()
-    (list (executable-find "cmake")
-          (list "--build" (expand-file-name cmake-project-build-directory) "--" "-j" "1" )))
+;; (defun cmake-project-flymake-init ()
+;;     (list (executable-find "cmake")
+;;           (list "--build" (expand-file-name cmake-project-build-directory) "--" "-j" "1" )))
 
-;; --------------------------------
-;; --- Recompile Same Directory ---
-;; --------------------------------
-(global-set-key [f5] 'compile-again)
+;; ;; --------------------------------
+;; ;; --- Recompile Same Directory ---
+;; ;; --------------------------------
+;; (global-set-key [f5] 'compile-again)
 
-(setq compilation-last-buffer nil)
+;; (setq compilation-last-buffer nil)
 
-(defun compile-again (pfx)
-  """Run the same compile as the last time.
-If there was no last time, or there is a prefix argument, this acts like
-M-x compile.
-"""
- (interactive "p")
- (if (and (eq pfx 1)
-	  compilation-last-buffer)
-     (progn
-       (set-buffer compilation-last-buffer)
-       (revert-buffer t t))
-   (call-interactively 'compile)))
+;; (defun compile-again (pfx)
+;;   """Run the same compile as the last time.
+;; If there was no last time, or there is a prefix argument, this acts like
+;; M-x compile.
+;; """
+;;  (interactive "p")
+;;  (if (and (eq pfx 1)
+;; 	  compilation-last-buffer)
+;;      (progn
+;;        (set-buffer compilation-last-buffer)
+;;        (revert-buffer t t))
+;;    (call-interactively 'compile)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yasnipped and auto-complete config
@@ -323,6 +287,8 @@ M-x compile.
 ;; Emacs-specific options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (column-number-mode t)
+
+(setq inhibit-startup-message t)
 
 (if (functionp 'tool-bar-mode) (tool-bar-mode -1))
 (if (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -454,11 +420,11 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Smooth Scrolling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
-(require 'smooth-scrolling)
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time    
-(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling    
-(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-(setq scroll-step 1) ;; keyboard scroll one line at a time
+;; (require 'smooth-scrolling)
+;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time    
+;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling    
+;; (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+;; (setq scroll-step 1) ;; keyboard scroll one line at a time
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sublime-style multiple cursors
@@ -494,48 +460,48 @@ Don't mess with special buffers."
 ;; remember window size and buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; remember size of window
-(defun save-framegeometry ()
-  "Gets the current frame's geometry and saves to ~/.emacs.d/framegeometry."
-  (let (
-        (framegeometry-left (frame-parameter (selected-frame) 'left))
-        (framegeometry-top (frame-parameter (selected-frame) 'top))
-        (framegeometry-width (frame-parameter (selected-frame) 'width))
-        (framegeometry-height (frame-parameter (selected-frame) 'height))
-        (framegeometry-file (expand-file-name "~/.emacs.d/framegeometry"))
-        )
+;; (defun save-framegeometry ()
+;;   "Gets the current frame's geometry and saves to ~/.emacs.d/framegeometry."
+;;   (let (
+;;         (framegeometry-left (frame-parameter (selected-frame) 'left))
+;;         (framegeometry-top (frame-parameter (selected-frame) 'top))
+;;         (framegeometry-width (frame-parameter (selected-frame) 'width))
+;;         (framegeometry-height (frame-parameter (selected-frame) 'height))
+;;         (framegeometry-file (expand-file-name "~/.emacs.d/framegeometry"))
+;;         )
 
-    (with-temp-buffer
-      (insert
-       ";;; This is the previous emacs frame's geometry.\n"
-       ";;; Last generated " (current-time-string) ".\n"
-       "(setq initial-frame-alist\n"
-       "      '(\n"
-       (format "        (top . %d)\n" (max framegeometry-top 0))
-       (format "        (left . %d)\n" (max framegeometry-left 0))
-       (format "        (width . %d)\n" (max framegeometry-width 0))
-       (format "        (height . %d)))\n" (max framegeometry-height 0)))
-      (when (file-writable-p framegeometry-file)
-        (write-file framegeometry-file))))
-  )
+;;     (with-temp-buffer
+;;       (insert
+;;        ";;; This is the previous emacs frame's geometry.\n"
+;;        ";;; Last generated " (current-time-string) ".\n"
+;;        "(setq initial-frame-alist\n"
+;;        "      '(\n"
+;;        (format "        (top . %d)\n" (max framegeometry-top 0))
+;;        (format "        (left . %d)\n" (max framegeometry-left 0))
+;;        (format "        (width . %d)\n" (max framegeometry-width 0))
+;;        (format "        (height . %d)))\n" (max framegeometry-height 0)))
+;;       (when (file-writable-p framegeometry-file)
+;;         (write-file framegeometry-file))))
+;;   )
 
-(defun load-framegeometry ()
-  "Loads ~/.emacs.d/framegeometry which should load the previous frame's geometry."
-  (let ((framegeometry-file (expand-file-name "~/.emacs.d/framegeometry")))
-    (when (file-readable-p framegeometry-file)
-      (load-file framegeometry-file)))
-  )
+;; (defun load-framegeometry ()
+;;   "Loads ~/.emacs.d/framegeometry which should load the previous frame's geometry."
+;;   (let ((framegeometry-file (expand-file-name "~/.emacs.d/framegeometry")))
+;;     (when (file-readable-p framegeometry-file)
+;;       (load-file framegeometry-file)))
+;;   )
 
-;; Special work to do ONLY when there is a window system being used
-(if window-system
-    (progn
-      (add-hook 'after-init-hook 'load-framegeometry)
-      (add-hook 'kill-emacs-hook 'save-framegeometry))
-  )
+;; ;; Special work to do ONLY when there is a window system being used
+;; (if window-system
+;;     (progn
+;;       (add-hook 'after-init-hook 'load-framegeometry)
+;;       (add-hook 'kill-emacs-hook 'save-framegeometry))
+;;   )
 
 ;; eof
 
 ;; remember everything else on close
-(desktop-save-mode 1) 
+;;(desktop-save-mode 1) 
 ;; additionally store ecb window sizes after adjustment via ecb-store-window-sizes
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -554,7 +520,7 @@ Don't mess with special buffers."
  '(compilation-scroll-output (quote first-error))
  '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
  '(custom-safe-themes (quote ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
- '(ecb-auto-activate t)
+ '(ecb-auto-activate nil)
  '(ecb-layout-name "leftright2")
  '(ecb-layout-window-sizes (quote (("leftright2" (ecb-directories-buffer-name 0.10900473933649289 . 0.6296296296296297) (ecb-sources-buffer-name 0.10900473933649289 . 0.35185185185185186) (ecb-methods-buffer-name 0.14218009478672985 . 0.6296296296296297) (ecb-history-buffer-name 0.14218009478672985 . 0.35185185185185186)))))
  '(ecb-options-version "2.40")
@@ -568,6 +534,7 @@ Don't mess with special buffers."
  '(magit-server-window-for-commit nil)
  '(magit-status-buffer-switch-function (quote switch-to-buffer))
  '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
+ '(org-link-frame-setup (quote ((vm . vm-visit-folder-other-frame) (vm-imap . vm-visit-imap-folder-other-frame) (gnus . org-gnus-no-new-news) (file . find-file) (wl . wl-other-frame))))
  '(show-paren-mode t)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
  '(vc-annotate-background nil)
@@ -592,6 +559,6 @@ Don't mess with special buffers."
 (load-theme 'sanityinc-solarized-light t)
 
 ;; force restore of window sizes
-(run-with-idle-timer 0.2 nil 'ecb-restore-window-sizes)
+;;(run-with-idle-timer 0.2 nil 'ecb-restore-window-sizes)
 
 
