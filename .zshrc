@@ -43,10 +43,11 @@ ZSH_THEME="blinks"
 plugins=(git colorize debian extract git-extras github)
 
 source $ZSH/oh-my-zsh.sh
-source /opt/intel/vtune_amplifier_xe_2013/amplxe-vars.sh
+#source /opt/intel/vtune_amplifier_xe_2013/amplxe-vars.sh
 
 # Customize to your needs...
 export PATH=$PATH:/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+export PATH=/home/schlag/repo/schlag_git/src/external/sqlplot-tools/build/src:$PATH
 export PATH=$HOME/.cask/bin:$PATH
 export PATH=/usr/local/texlive/2013/bin/x86_64-linux:$PATH
 export PATH=$PATH:/software/css
