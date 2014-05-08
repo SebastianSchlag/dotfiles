@@ -3,6 +3,7 @@
 (source "elpa" "http://tromey.com/elpa/")
 (source marmalade)
 
+(depends-on "auctex")
 (depends-on "auto-complete")
 (depends-on "auto-complete-clang-async")
 (depends-on "autopair")
