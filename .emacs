@@ -391,6 +391,10 @@ Don't mess with special buffers."
 ;; toggle comment
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
 
+;;ecb
+(global-set-key (kbd "C-c e") 'ecb-activate)
+(global-set-key (kbd "C-c w") 'ecb-deactivate)
+
 ;; bind Backspace and Delete keys with M- and C- to special kill functions
 (defun dove-backward-kill-word (&optional arg)
   "Backward kill word, but do not insert it into kill-ring"
