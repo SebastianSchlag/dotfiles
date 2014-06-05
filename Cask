@@ -25,4 +25,5 @@
 (depends-on "popup")
 (depends-on "s")
 (depends-on "smooth-scrolling")
+(depends-on "xcscope")
 (depends-on "yasnippet")

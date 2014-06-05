@@ -94,10 +94,10 @@
 (add-hook 'semantic-init-hooks 'semantic-imenu-hook)
 
 ;; auto-complete intrgration
-(defun c-mode-autocomplete-cedet-hook ()
-  (add-to-list 'ac-sources 'ac-source-gtags)
-  (add-to-list 'ac-sources 'ac-source-semantic))
-(add-hook 'c-mode-common-hook 'c-mode-autocomplete-cedet-hook)
+;; (defun c-mode-autocomplete-cedet-hook ()
+;;   (add-to-list 'ac-sources 'ac-source-gtags)
+;;   (add-to-list 'ac-sources 'ac-source-semantic))
+;; (add-hook 'c-mode-common-hook 'c-mode-autocomplete-cedet-hook)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package Management
@@ -201,65 +201,6 @@
 (add-hook 'c-mode-hook '100-column-rule)
 (add-hook 'c++-mode-hook '100-column-rule)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Flymake
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (require 'cmake-project)
-;; (require 'flymake)
-;; (require 'flymake-cursor)
-
-;; (defun maybe-cmake-project-hook ()
-;;   (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
-;; (add-hook 'c-mode-hook 'maybe-cmake-project-hook)
-;; (add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
-
-;; ;; (setq flymake-gui-warnings-enabled nil)
-;; ;; (set-variable 'flymake-start-syntax-check-on-newline nil)
-
-;; (defun maybe-cmake-project-hook ()
-;;   (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
-;; (add-hook 'c-mode-hook 'maybe-cmake-project-hook)
-;; (add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
-
-;; (defun turn-on-flymake-mode()
-;;   (if (and (boundp 'flymake-mode) flymake-mode)
-;;       ()
-;;     (flymake-mode t)))
-
-;; (add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
-;; (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
-
-;;  (defun cmake-project-current-build-command ()
-;;     "Command line to compile current project as configured in the
-;;   build directory."
-;;     (concat "cmake --build "
-;;             (shell-quote-argument (expand-file-name
-;;                                    cmake-project-build-directory)) " -- -j 1" ))
-
-;; (defun cmake-project-flymake-init ()
-;;     (list (executable-find "cmake")
-;;           (list "--build" (expand-file-name cmake-project-build-directory) "--" "-j" "1" )))
-
-;; ;; --------------------------------
-;; ;; --- Recompile Same Directory ---
-;; ;; --------------------------------
-;; (global-set-key [f5] 'compile-again)
-
-;; (setq compilation-last-buffer nil)
-
-;; (defun compile-again (pfx)
-;;   """Run the same compile as the last time.
-;; If there was no last time, or there is a prefix argument, this acts like
-;; M-x compile.
-;; """
-;;  (interactive "p")
-;;  (if (and (eq pfx 1)
-;; 	  compilation-last-buffer)
-;;      (progn
-;;        (set-buffer compilation-last-buffer)
-;;        (revert-buffer t t))
-;;    (call-interactively 'compile)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yasnipped and auto-complete config
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -270,6 +211,35 @@
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (ac-config-default)
+(require 'auto-complete-clang-async)
+
+;; Select candidates with C-n/C-p only when completion menu is displayed:
+(setq ac-use-menu-map t)
+(define-key ac-menu-map "C-n" 'ac-next)
+(define-key ac-menu-map "C-p" 'ac-previous)
+
+(require 'xcscope)
+(setq cscope-index-recursively t)
+
+(setq-default ac-sources '(
+			   ac-source-abbrev 
+			   ac-source-dictionary 
+			   ac-source-words-in-same-mode-buffers 
+			   ac-source-filename 
+			   ac-source-yasnippet)
+)
+
+(setq ac-candidate-limit 100) ;; do not stall with too many results
+(setq ac-auto-start 0)
+(setq ac-auto-show-menu t)
+(setq ac-quick-help-delay 0)
+(setq ac-use-fuzzy 1.5)
+(setq ac-show-menu-immediately-on-auto-complete t)
+(setq ac-expand-on-auto-complete nil)
+(setq ac-quick-help-height 20)
+(setq ac-menu-height 20)
+(define-key ac-mode-map  [(control tab)] 'auto-complete)
+
 
 ;;; set the trigger key so that it can work together with yasnippet on tab key,
 ;;; if the word exists in yasnippet, pressing tab will cause yasnippet to
@@ -277,11 +247,27 @@
 (ac-set-trigger-key "TAB")
 (ac-set-trigger-key "<tab>")
 
-;;auto complete and corresponding cedet configuration
-(defun my-c-mode-cedet-hook ()
-  (add-to-list 'ac-sources 'ac-source-gtags)
-  (add-to-list 'ac-sources 'ac-source-semantic-raw))
-(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+
+(defun ac-cc-mode-setup ()
+  (setq ac-clang-complete-executable "~/.emacs.d/external/clang-complete")
+  (setq clang-completion-suppress-error 't)
+  (setq ac-clang-cflags (append '("-std=c++11") ac-clang-cflags))
+  (setq ac-sources '(ac-source-clang-async))
+  (ac-clang-launch-completion-process)
+)
+
+(defun my-ac-config ()
+  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+  (add-hook 'auto-complete-mode-hook 'ac-common-setup)
+  (global-auto-complete-mode t))
+
+(my-ac-config)
+
+;; ;;auto complete and corresponding cedet configuration
+;; (defun my-c-mode-cedet-hook ()
+;;   (add-to-list 'ac-sources 'ac-source-gtags)
+;;   (add-to-list 'ac-sources 'ac-source-semantic-raw))
+;; (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs-specific options
@@ -565,4 +551,4 @@ Don't mess with special buffers."
 ;; force restore of window sizes
 ;;(run-with-idle-timer 0.2 nil 'ecb-restore-window-sizes)
 
-
+(setq debug-on-error t)
