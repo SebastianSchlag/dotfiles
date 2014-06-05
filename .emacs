@@ -26,14 +26,9 @@
 (add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
 ;; enables global support for Semanticdb; 
 (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
-;; activates use of separate styles for tags decoration. These styles are defined in the semantic-decoration-styles list; 
-;;(add-to-list 'semantic-default-submodes 'global-semantic-decoration-mode)
 ;; activates highlighting of local names that are the same as name of tag under cursor
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
-;; shows which elements weren't processed by current parser's rules;
-;;(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
-;; shows changes in the text that weren't processed by incremental parser yet.
-;;(add-to-list 'semantic-default-submodes 'global-semantic-highlight-edits-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
 
 ;; Activate semantic
 (semantic-mode 1)
@@ -551,4 +546,4 @@ Don't mess with special buffers."
 ;; force restore of window sizes
 ;;(run-with-idle-timer 0.2 nil 'ecb-restore-window-sizes)
 
-(setq debug-on-error t)
+;;(setq debug-on-error t)
