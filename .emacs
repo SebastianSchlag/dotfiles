@@ -360,6 +360,13 @@ Don't mess with special buffers."
 ;; Fast TODO Selection
 (setq org-use-fast-todo-selection t)
 
+
+;;-------------------------------------------------------------------------
+;; Supporting Functions
+;;-------------------------------------------------------------------------
+(require 'org)
+(define-key org-mode-map "\C-cs" 'org-sort)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General Keybindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -501,6 +508,7 @@ Don't mess with special buffers."
  '(ac-auto-start 0)
  '(ansi-color-faces-vector [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
+ '(column-number-mode t)
  '(compilation-always-kill t)
  '(compilation-scroll-output (quote first-error))
  '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
@@ -521,6 +529,7 @@ Don't mess with special buffers."
  '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
  '(org-link-frame-setup (quote ((vm . vm-visit-folder-other-frame) (vm-imap . vm-visit-imap-folder-other-frame) (gnus . org-gnus-no-new-news) (file . find-file) (wl . wl-other-frame))))
  '(show-paren-mode t)
+ '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
  '(vc-annotate-background nil)
  '(vc-annotate-color-map (quote ((20 . "#dc322f") (40 . "#cb4b16") (60 . "#b58900") (80 . "#859900") (100 . "#2aa198") (120 . "#268bd2") (140 . "#d33682") (160 . "#6c71c4") (180 . "#dc322f") (200 . "#cb4b16") (220 . "#b58900") (240 . "#859900") (260 . "#2aa198") (280 . "#268bd2") (300 . "#d33682") (320 . "#6c71c4") (340 . "#dc322f") (360 . "#cb4b16"))))
@@ -533,7 +542,7 @@ Don't mess with special buffers."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 128 :width normal :foundry "unknown" :family "Ubuntu Mono"))))
+ '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "unknown" :family "Monaco"))))
  '(region ((t (:background "gray90"))))
  '(semantic-highlight-edits-face ((t (:background "gray90"))))
  '(yas-field-highlight-face ((t (:background "gray90")))))
