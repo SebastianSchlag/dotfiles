@@ -47,7 +47,7 @@
   (local-set-key "\C-c?" 'semantic-ia-complete-symbol-menu) ;; another way to complete the symbol you are typing
   (local-set-key "\C-c>" 'semantic-complete-analyze-inline) ;; when you typed . or -> after an object name, use this key to show possible public member functions or data members.
   (local-set-key "\C-c=" 'semantic-decoration-include-visit)  ;; visit the header file under cursor 
-  (local-set-key "\C-cj" 'semantic-ia-fast-jump) ;; jump to the definition of the symbol under cursor 
+  (local-set-key "\C-cj" 'semantic-complete-jump) ;; jump to the definition of the symbol under cursor 
   (local-set-key "\C-cq" 'semantic-ia-show-doc)  ;;  show the document of the symbol under cursor
   (local-set-key "\C-cs" 'semantic-ia-show-summary) ;; show a summary about the symbol under cursor
   (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle) ;; toggle between the implementation and a prototype of symbol under cursor
