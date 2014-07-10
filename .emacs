@@ -270,6 +270,26 @@
 (my-ac-config)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; powerline
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'powerline)
+(powerline-default-theme)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; smartparens default configuration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'smartparens-config)
+(smartparens-global-mode t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; projectile
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-hook 'c-mode-hook 'projectile-mode)
+(add-hook 'c++-mode-hook 'projectile-mode)
+;; let projectile be usable everywhere
+(setq projectile-require-project-root nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; cpputils-cmake
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'cpputils-cmake)
@@ -286,10 +306,6 @@
 ;; OPTIONAL, some users need specify extra flags forwarded to compiler
 (setq cppcm-extra-preprocss-flags-from-user '("-I/usr/src/linux/include" "-DNDEBUG"))
 (setq cppcm-build-dirname "debug")
-
-;; flycheck
-(require 'flycheck)
-(add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; (require 'flymake)
 ;; (require 'flymake-cursor)
@@ -450,7 +466,7 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Smooth Scrolling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
-;; (require 'smooth-scrolling)
+(require 'smooth-scrolling)
 ;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time    
 ;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling    
 ;; (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
@@ -568,6 +584,7 @@ Don't mess with special buffers."
  '(magit-status-buffer-switch-function (quote switch-to-buffer))
  '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
  '(org-link-frame-setup (quote ((vm . vm-visit-folder-other-frame) (vm-imap . vm-visit-imap-folder-other-frame) (gnus . org-gnus-no-new-news) (file . find-file) (wl . wl-other-frame))))
+ '(powerline-default-separator (quote arrow-fade))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
@@ -583,6 +600,9 @@ Don't mess with special buffers."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "unknown" :family "Monaco"))))
+ '(powerline-active1 ((t (:inherit mode-line :background "#93a1a1" :foreground "#657b83"))))
+ '(powerline-inactive1 ((t (:inherit mode-line :background "#93a1a1" :foreground "#657b83"))))
+ '(powerline-inactive2 ((t (:inherit mode-line :background "#eee8d5" :foreground "#657b83"))))
  '(region ((t (:background "gray90"))))
  '(semantic-highlight-edits-face ((t (:background "gray90"))))
  '(yas-field-highlight-face ((t (:background "gray90")))))
