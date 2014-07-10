@@ -1,3 +1,5 @@
+(server-start)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load CEDET - taken from: https://gist.github.com/alexott/3930120
 ;; adapted according to: http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
@@ -7,28 +9,29 @@
 (load-file (concat cedet-root-path "cedet-devel-load.el"))
 (add-to-list 'load-path (concat cedet-root-path "contrib"))
 
-;; select which submodes we want to activate
-;; enables automatic bookmarking of tags that you edited, so you can return to them later with the semantic-mrub-switch-tags command;
-(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-;; enables global support for Semanticdb
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
-;; activates automatic parsing of source code in the idle time;
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
-;; activates displaying of possible name completions in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled; 
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode)
-;; activates displaying of information about current tag in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled.
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
-;; activates mode when name of current tag will be shown in top line of buffer;
-(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+;; select which submodes we want to activat
 ;; activates CEDET's context menu that is bound to right mouse button;
 (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode) 
 ;; activates highlighting of first line for current tag (function, class, etc.);
 (add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
-;; enables global support for Semanticdb; 
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
+;; activates displaying of possible name completions in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled; 
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode)
 ;; activates highlighting of local names that are the same as name of tag under cursor
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
+;; activates automatic parsing of source code in the idle time;
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
+;; enables automatic bookmarking of tags that you edited, so you can return to them later with the semantic-mrub-switch-tags command;
 (add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-show-parser-state-mode)
+; shows which elements weren't processed by current parser's rules;
+(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
+;; enables global support for Semanticdb; 
+(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-breadcrumbs-mode)
+;; activates displaying of information about current tag in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled.
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
+;; activates mode when name of current tag will be shown in top line of buffer;
+(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
 
 ;; Activate semantic
 (semantic-mode 1)
@@ -55,6 +58,9 @@
   (local-set-key "\C-c-" 'semantic-tag-folding-fold-block) ;; fold the block under cursor
   (local-set-key "\C-c\C-c+" 'semantic-tag-folding-show-all) ;; unfold all
   (local-set-key "\C-c\C-c-" 'semantic-tag-folding-fold-all) ;; fold all
+  (gtags-mode t)
+  (local-set-key "\C-cf" 'gtags-find-tag)
+ (flyspell-prog-mode)
   )
 (add-hook 'c-mode-common-hook 'my-cedet-hook)
 (add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
@@ -71,17 +77,14 @@
 (when (cedet-gnu-global-version-check t)
 (semanticdb-enable-gnu-global-databases 'c-mode t)
 (semanticdb-enable-gnu-global-databases 'c++-mode t))
-
-;; enable ctags for some languages
-(when (cedet-ectag-version-check t)
-  (semantic-load-enable-primary-ectags-support))
  
-;; SRecode
-(global-srecode-minor-mode 1)
-
 ;; EDE
 (global-ede-mode 1)
 (ede-enable-generic-projects)
+
+(ede-cpp-root-project "hypergraph-partitioning"
+                      :file "~/repo/schlag_git/CMakeLists.txt"
+                      )
 
 ;; Integration with imenu
 (defun semantic-imenu-hook ()
@@ -195,7 +198,9 @@
 ;; yasnipped and auto-complete config
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'yasnippet) ;; should be loaded before auto-complete
-(yas-global-mode 1)
+(yas-reload-all)
+(add-hook 'c-mode-common-hook '(lambda () (yas-minor-mode)))
+(add-hook 'c++-mode-hook '(lambda () (yas-minor-mode)))
 
 ;; auto-complete
 (require 'cl)
@@ -269,6 +274,62 @@
   (global-auto-complete-mode t))
 
 (my-ac-config)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;set up hunspell for flyspell-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq ispell-program-name "/usr/bin/hunspell")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; load Dired+ when dired is loaded
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'dired-copy-paste)
+
+(define-key dired-mode-map "\C-w" 'dired-copy-paste-do-cut)
+(define-key dired-mode-map "\M-w" 'dired-copy-paste-do-copy)
+(define-key dired-mode-map "\C-y" 'dired-copy-paste-do-paste)
+
+(defun my-dired-mouse-find-file (event)
+  "In dired, visit the file or directory name you click on."
+  (interactive "e")
+  (let (window pos file)
+    (save-excursion
+      (setq window (posn-window (event-end event))
+            pos (posn-point (event-end event)))
+      (if (not (windowp window))
+          (error "No file chosen"))
+      (set-buffer (window-buffer window))
+      (goto-char pos)
+      (setq file (dired-get-file-for-visit)))
+    (if (file-directory-p file)
+        (or (and (cdr dired-subdir-alist)
+                 (dired-goto-subdir file))
+            (progn
+              (select-window window)
+              (dired file)))
+      (select-window window)
+      (find-file (file-name-sans-versions file t)))))
+
+(defun my-dired-terminal (&optional arg)
+  "Launch terminal in current directory."
+  (interactive)
+  ;(start-process "terminal" "*scratch*" "/usr/bin/urxvt")
+  (start-process "terminal" nil "/usr/bin/zsh")
+)
+
+(defun set-my-dired-keys-hook ()
+  "My favorite dired keys."
+  ; for some reason mouse-2 = left click (mouse-1)
+  (define-key dired-mode-map [mouse-2] 'my-dired-mouse-find-file)
+  (define-key dired-mode-map [M-mouse-2] 'diredp-mouse-find-file-other-frame)
+  ; backspace
+  (define-key dired-mode-map [backspace] 'dired-up-directory)
+  ; F4 -> launch terminal
+  (define-key dired-mode-map [f4] 'my-dired-terminal)
+)
+
+(add-hook 'dired-mode-hook 'set-my-dired-keys-hook)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; powerline
@@ -422,6 +483,16 @@ Don't mess with special buffers."
 (require 'org)
 (define-key org-mode-map "\C-cs" 'org-sort)
 
+;; put all temporary files into /tmp
+(defconst emacs-tmp-dir (format "%s/%s%s/" temporary-file-directory "emacs" (user-uid)))
+(setq backup-directory-alist `((".*" . ,emacs-tmp-dir)))
+(setq auto-save-file-name-transforms `((".*" ,emacs-tmp-dir t)))
+(setq auto-save-list-file-prefix emacs-tmp-dir)
+(setq tramp-auto-save-directory emacs-tmp-dir)
+(setq tramp-persistency-file-name (format "%s/tramp" emacs-tmp-dir))
+(setq image-dired-dir (format "%s/image-dired" emacs-tmp-dir))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General Keybindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -464,14 +535,44 @@ Don't mess with special buffers."
 (global-set-key [(meta delete)] 'kill-word)
 (global-set-key [(control delete)] 'dove-forward-kill-word)
 
+(global-set-key (kbd "<C-mouse-4>") 'text-scale-increase)
+(global-set-key (kbd "<C-mouse-5>") 'text-scale-decrease)
+
+(global-set-key [C-x C-b] 'buffer-menu)
+(global-set-key [M-S-up] 'buffer-menu)
+
+(global-set-key [M-S-left] 'previous-buffer)
+(global-set-key [M-S-right] 'next-buffer)
+
+; window handling
+(global-set-key "\M-`" 'delete-other-windows)
+(global-set-key "\M-2" 'new-frame)
+(global-set-key "\M-3" 'delete-frame)
+
+; go to last edit point
+(global-set-key [(ctrl meta l)] 'goto-last-change);
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Smooth Scrolling
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+;; Scroll line by line
+(setq redisplay-dont-pause t)
+;; number of lines at the top and bottom of a window.
+(setq scroll-margin 2)
+;; Controls if scroll commands move point to keep its screen position unchanged.
+(setq scroll-preserve-screen-position nil)   
 (require 'smooth-scrolling)
-;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time    
-;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling    
-;; (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-;; (setq scroll-step 1) ;; keyboard scroll one line at a time
+ ;; four line at a time
+(setq mouse-wheel-scroll-amount '(4 ((shift) . 4)))
+ ;; accelerate scrolling
+(setq mouse-wheel-progressive-speed 't)
+ ;; scroll window under mouse
+(setq mouse-wheel-follow-mouse 't)
+;; keyboard scroll four line at a time
+(setq scroll-step 4)
+;; number of lines at the top and bottom of a window.
+(setq smooth-scroll-margin 3)
+(setq smooth-scroll-strict-margins 't)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sublime-style multiple cursors
@@ -488,6 +589,14 @@ Don't mess with special buffers."
 (require 'fic-mode)
 (add-hook 'c++-mode-hook 'turn-on-fic-mode) 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; svn integration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(autoload 'svn-status "dsvn" "Run `svn status'." t)
+(autoload 'svn-update "dsvn" "Run `svn update'." t)
+
+(global-set-key (kbd "<C-f11>") 'svn-status)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window related shortcuts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -503,6 +612,17 @@ Don't mess with special buffers."
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
 (global-set-key (kbd "S-C-<up>") 'enlarge-window)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; smex
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'ido)
+(ido-mode t)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizations
@@ -536,9 +656,13 @@ Don't mess with special buffers."
  '(magit-restore-window-configuration nil)
  '(magit-server-window-for-commit nil)
  '(magit-status-buffer-switch-function (quote switch-to-buffer))
+ '(magit-save-some-buffers (quote dontask))
+ '(make-backup-files nil)
+ '(openwith-associations (quote (("\\.pdf\\'" "evince" (file)) ("\\.pdf\\'" "evince" (file)) ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file)))))
  '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
  '(org-link-frame-setup (quote ((vm . vm-visit-folder-other-frame) (vm-imap . vm-visit-imap-folder-other-frame) (gnus . org-gnus-no-new-news) (file . find-file) (wl . wl-other-frame))))
  '(powerline-default-separator (quote arrow-fade))
+'(rebox-style-loop (quote (370 243)))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
