@@ -187,6 +187,7 @@
 
 ;; enforce column size
 (load-file "~/.emacs.d/external/column-enforce-mode.el")
+(require 'column-enforce-mode)
 (add-hook 'c-mode-hook '100-column-rule)
 (add-hook 'c++-mode-hook '100-column-rule)
 
@@ -502,53 +503,6 @@ Don't mess with special buffers."
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
 (global-set-key (kbd "S-C-<up>") 'enlarge-window)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; remember window size and buffers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; remember size of window
-;; (defun save-framegeometry ()
-;;   "Gets the current frame's geometry and saves to ~/.emacs.d/framegeometry."
-;;   (let (
-;;         (framegeometry-left (frame-parameter (selected-frame) 'left))
-;;         (framegeometry-top (frame-parameter (selected-frame) 'top))
-;;         (framegeometry-width (frame-parameter (selected-frame) 'width))
-;;         (framegeometry-height (frame-parameter (selected-frame) 'height))
-;;         (framegeometry-file (expand-file-name "~/.emacs.d/framegeometry"))
-;;         )
-
-;;     (with-temp-buffer
-;;       (insert
-;;        ";;; This is the previous emacs frame's geometry.\n"
-;;        ";;; Last generated " (current-time-string) ".\n"
-;;        "(setq initial-frame-alist\n"
-;;        "      '(\n"
-;;        (format "        (top . %d)\n" (max framegeometry-top 0))
-;;        (format "        (left . %d)\n" (max framegeometry-left 0))
-;;        (format "        (width . %d)\n" (max framegeometry-width 0))
-;;        (format "        (height . %d)))\n" (max framegeometry-height 0)))
-;;       (when (file-writable-p framegeometry-file)
-;;         (write-file framegeometry-file))))
-;;   )
-
-;; (defun load-framegeometry ()
-;;   "Loads ~/.emacs.d/framegeometry which should load the previous frame's geometry."
-;;   (let ((framegeometry-file (expand-file-name "~/.emacs.d/framegeometry")))
-;;     (when (file-readable-p framegeometry-file)
-;;       (load-file framegeometry-file)))
-;;   )
-
-;; ;; Special work to do ONLY when there is a window system being used
-;; (if window-system
-;;     (progn
-;;       (add-hook 'after-init-hook 'load-framegeometry)
-;;       (add-hook 'kill-emacs-hook 'save-framegeometry))
-;;   )
-
-;; eof
-
-;; remember everything else on close
-;;(desktop-save-mode 1) 
-;; additionally store ecb window sizes after adjustment via ecb-store-window-sizes
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizations
@@ -612,7 +566,5 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-theme 'sanityinc-solarized-light t)
 
-;; force restore of window sizes
-;;(run-with-idle-timer 0.2 nil 'ecb-restore-window-sizes)
 
 ;;(setq debug-on-error t)
