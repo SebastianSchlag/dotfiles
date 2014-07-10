@@ -268,6 +268,40 @@
   (global-auto-complete-mode t))
 
 (my-ac-config)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cpputils-cmake
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'cpputils-cmake)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (if (derived-mode-p 'c-mode 'c++-mode)
+                (cppcm-reload-all)
+              )))
+;; OPTIONAL, somebody reported that they can use this package with Fortran
+(add-hook 'c90-mode-hook (lambda () (cppcm-reload-all)))
+;; OPTIONAL, avoid typing full path when starting gdb
+(global-set-key (kbd "C-c C-g")
+ '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
+;; OPTIONAL, some users need specify extra flags forwarded to compiler
+(setq cppcm-extra-preprocss-flags-from-user '("-I/usr/src/linux/include" "-DNDEBUG"))
+(setq cppcm-build-dirname "debug")
+
+;; flycheck
+(require 'flycheck)
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+;; (require 'flymake)
+;; (require 'flymake-cursor)
+
+;; (defun turn-on-flymake-mode()
+;;   (if (and (boundp 'flymake-mode) flymake-mode)
+;;       ()
+;;     (flymake-mode t)))
+
+;; (add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
+;; (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs-specific options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -525,7 +559,9 @@ Don't mess with special buffers."
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
  '(ecb-source-path (quote ("~/repo/" ("/" "/"))))
  '(fci-rule-color "#eee8d5")
+ '(flycheck-clang-language-standard "c++11")
  '(flymake-log-level -1)
+ '(flymake-master-file-dirs (quote ("." "./src" "./UnitTest" "~/repo/schlag_git/src/application")))
  '(magit-gitk-executable nil)
  '(magit-restore-window-configuration nil)
  '(magit-server-window-for-commit nil)
