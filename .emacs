@@ -72,6 +72,13 @@
   (local-set-key "\C-c\C-r" 'semantic-symref)
   )
 (add-hook 'c-mode-common-hook 'alexott/c-mode-cedet-hook)
+(add-hook 'c++-mode-hook 'alexott/c-mode-cedet-hook)
+
+(defun my-c-mode-cedet-hook ()
+  (add-to-list 'ac-sources 'ac-source-gtags)
+  (add-to-list 'ac-sources 'ac-source-semantic))
+(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+(add-hook 'c++-mode-hook 'my-c-mode-cedet-hook)
 
 ;; enable support for gnu global
 (when (cedet-gnu-global-version-check t)
@@ -81,9 +88,12 @@
 ;; EDE
 (global-ede-mode 1)
 (ede-enable-generic-projects)
+(semantic-load-enable-code-helpers)
 
 (ede-cpp-root-project "hypergraph-partitioning"
                       :file "~/repo/schlag_git/CMakeLists.txt"
+		      :include-path '("/"
+				      "/src")
                       )
 
 ;; Integration with imenu
