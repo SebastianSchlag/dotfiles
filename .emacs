@@ -88,12 +88,6 @@
   (imenu-add-to-menubar "TAGS"))
 (add-hook 'semantic-init-hooks 'semantic-imenu-hook)
 
-;; auto-complete intrgration
-;; (defun c-mode-autocomplete-cedet-hook ()
-;;   (add-to-list 'ac-sources 'ac-source-gtags)
-;;   (add-to-list 'ac-sources 'ac-source-semantic))
-;; (add-hook 'c-mode-common-hook 'c-mode-autocomplete-cedet-hook)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package Management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -203,10 +197,27 @@
 (yas-global-mode 1)
 
 ;; auto-complete
+(require 'cl)
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(setq ac-comphist-file (expand-file-name
+             "~/.emacs.d/ac-comphist.dat"))
 (ac-config-default)
 (require 'auto-complete-clang-async)
+
+(require 'ac-math) 
+(add-to-list 'ac-modes 'latex-mode)   ; make auto-complete aware of `latex-mode`
+
+ (defun ac-LaTeX-mode-setup () ; add ac-sources to default ac-sources
+   (setq ac-sources
+         (append '(ac-source-math-unicode ac-source-math-latex ac-source-latex-commands)
+                 ac-sources))
+   )
+(add-hook 'LaTeX-mode-hook 'ac-LaTeX-mode-setup)
+(setq ac-math-unicode-in-math-p t)
+
+(require 'auto-complete-auctex)
+
 
 ;; Select candidates with C-n/C-p only when completion menu is displayed:
 (setq ac-use-menu-map t)
@@ -257,13 +268,6 @@
   (global-auto-complete-mode t))
 
 (my-ac-config)
-
-;; ;;auto complete and corresponding cedet configuration
-;; (defun my-c-mode-cedet-hook ()
-;;   (add-to-list 'ac-sources 'ac-source-gtags)
-;;   (add-to-list 'ac-sources 'ac-source-semantic-raw))
-;; (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs-specific options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
