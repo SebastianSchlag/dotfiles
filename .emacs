@@ -653,7 +653,7 @@ Don't mess with special buffers."
  '(custom-safe-themes (quote ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
  '(ecb-auto-activate nil)
  '(ecb-layout-name "leftright2")
- '(ecb-layout-window-sizes (quote (("leftright2" (ecb-directories-buffer-name 0.10900473933649289 . 0.6296296296296297) (ecb-sources-buffer-name 0.10900473933649289 . 0.35185185185185186) (ecb-methods-buffer-name 0.14218009478672985 . 0.6296296296296297) (ecb-history-buffer-name 0.14218009478672985 . 0.35185185185185186)))))
+ '(ecb-layout-window-sizes (quote (("leftright2" (ecb-directories-buffer-name 0.0970464135021097 . 0.6333333333333333) (ecb-sources-buffer-name 0.0970464135021097 . 0.35) (ecb-methods-buffer-name 0.14345991561181434 . 0.6333333333333333) (ecb-history-buffer-name 0.14345991561181434 . 0.35)))))
  '(ecb-options-version "2.40")
  '(ecb-prescan-directories-for-emptyness nil)
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
@@ -664,15 +664,15 @@ Don't mess with special buffers."
  '(flymake-master-file-dirs (quote ("." "./src" "./UnitTest" "~/repo/schlag_git/src/application")))
  '(magit-gitk-executable nil)
  '(magit-restore-window-configuration nil)
+ '(magit-save-some-buffers (quote dontask))
  '(magit-server-window-for-commit nil)
  '(magit-status-buffer-switch-function (quote switch-to-buffer))
- '(magit-save-some-buffers (quote dontask))
  '(make-backup-files nil)
  '(openwith-associations (quote (("\\.pdf\\'" "evince" (file)) ("\\.pdf\\'" "evince" (file)) ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file)))))
  '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
  '(org-link-frame-setup (quote ((vm . vm-visit-folder-other-frame) (vm-imap . vm-visit-imap-folder-other-frame) (gnus . org-gnus-no-new-news) (file . find-file) (wl . wl-other-frame))))
  '(powerline-default-separator (quote arrow-fade))
-'(rebox-style-loop (quote (370 243)))
+ '(rebox-style-loop (quote (370 243)))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
@@ -700,5 +700,4 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-theme 'sanityinc-solarized-light t)
 
-
-;;(setq debug-on-error t)
+;;(setup debug-on-error t)
