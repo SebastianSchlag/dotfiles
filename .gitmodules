@@ -1,0 +1,3 @@
+[submodule "/home/schlag/repo/dotfiles/.zprezto"]
+	path = /home/schlag/repo/dotfiles/.zprezto
+	url = https://github.com/sorin-ionescu/prezto.git
