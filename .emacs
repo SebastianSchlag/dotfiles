@@ -22,9 +22,9 @@
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
 ;; enables automatic bookmarking of tags that you edited, so you can return to them later with the semantic-mrub-switch-tags command;
 (add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-show-parser-state-mode)
+;(add-to-list 'semantic-default-submodes 'global-semantic-show-parser-state-mode)
 ; shows which elements weren't processed by current parser's rules;
-(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
+;(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
 ;; enables global support for Semanticdb; 
 (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-breadcrumbs-mode)
