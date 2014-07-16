@@ -297,7 +297,7 @@
 
 (define-key dired-mode-map "\C-w" 'dired-copy-paste-do-cut)
 (define-key dired-mode-map "\M-w" 'dired-copy-paste-do-copy)
-(define-key dired-mode-map "\C-y" 'dired-copy-paste-do-paste)
+(define-key dired-mode-map "\C-z" 'dired-copy-paste-do-paste)
 
 (defun my-dired-mouse-find-file (event)
   "In dired, visit the file or directory name you click on."
@@ -506,6 +506,9 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General Keybindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(global-unset-key (kbd "C-z"))
+(global-set-key (kbd "C-z") 'yank)       ; paste
+
 ;; magit
 (global-set-key (kbd "<C-f12>") 'magit-status)
 ;; cycle through buffers
