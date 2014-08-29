@@ -96,8 +96,7 @@
 
 (ede-cpp-root-project "hypergraph-partitioning"
                       :file "~/repo/schlag_git/CMakeLists.txt"
-		      :include-path '("/"
-				      "/src")
+		      :include-path '("/src")
                       )
 
 ;; Integration with imenu
@@ -208,6 +207,19 @@
 (add-hook 'c-mode-common-hook '100-column-rule)
 (add-hook 'c++-mode-common-hook '100-column-rule)
 
+;; code folding
+;; C-c @ C-c	Command: hs-toggle-hiding  Toggle hiding/showing of a block
+;; C-c @ C-h	Command: hs-hide-block     Select current block at point and hide it
+;; C-c @ C-l	Command: hs-hide-level     Hide all block with indentation levels below this block
+;; C-c @ C-s	Command: hs-show-block     Select current block at point and show it.
+;; C-c @ C-M-h	Command: hs-hide-all       Hide all top level blocks, displaying only first and last lines.
+;; C-c @ C-M-s	Command: hs-show-all       Show everything
+(add-hook 'c-mode-common-hook   'hs-minor-mode)
+
+;; narrowing
+;; C-x n d	Command: narrow-to-defun   Narrow buffer to current function at point
+;; C-x n r/n	Command: narrow-to-region  Narrow buffer to active region
+;; C-x n w	Command: widen             Widen buffer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yasnipped and auto-complete config
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -645,6 +657,52 @@ Don't mess with special buffers."
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ggtags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'ggtags)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+              (ggtags-mode 1))))
+
+(define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
+(define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
+(define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
+(define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
+(define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
+(define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
+
+(define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark)
+
+(setq-local imenu-create-index-function #'ggtags-build-imenu-index)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; company mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(add-to-list 'company-backends 'company-c-headers)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; clean aindent mode & wsbutler - whitespace handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'clean-aindent-mode)
+(add-hook 'prog-mode-hook 'clean-aindent-mode)
+
+(require 'ws-butler)
+(add-hook 'c-mode-common-hook 'ws-butler-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GDB config
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq gdb-many-windows t  ;; use gdb-many-windows by default
+      gdb-show-main t     ;; Non-nil means display source file containing the main routine at startup
+ )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -692,6 +750,7 @@ Don't mess with special buffers."
  '(semantic-complete-inline-analyzer-idle-displayor-class (quote semantic-displayor-tooltip))
  '(semantic-displayor-tooltip-initial-max-tags 5)
  '(show-paren-mode t)
+ '(sp-autoinsert-quote-if-followed-by-closing-pair t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
  '(vc-annotate-background nil)
