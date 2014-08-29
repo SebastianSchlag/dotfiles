@@ -15,7 +15,7 @@
 ;; activates highlighting of first line for current tag (function, class, etc.);
 (add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
 ;; activates displaying of possible name completions in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled; 
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode)
+;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode)
 ;; activates highlighting of local names that are the same as name of tag under cursor
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
 ;; activates automatic parsing of source code in the idle time;
@@ -29,7 +29,7 @@
 (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-breadcrumbs-mode)
 ;; activates displaying of information about current tag in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled.
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
+;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
 ;; activates mode when name of current tag will be shown in top line of buffer;
 (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
 
@@ -46,9 +46,10 @@
 
 ;; customisation of modes
 (defun my-cedet-hook ()
-  (local-set-key [(control return)] 'semantic-ia-complete-symbol) ;; whatever the symbol you are typing, this hot key automatically complete it for you.
-  (local-set-key "\C-c?" 'semantic-ia-complete-symbol-menu) ;; another way to complete the symbol you are typing
+  (local-set-key [(control return)] 'semantic-ia-complete-symbol-menu) ;; whatever the symbol you are typing, this hot key automatically complete it for you.
+  (local-set-key "\C-c?" 'semantic-ia-complete-symbol) ;; another way to complete the symbol you are typing
   (local-set-key "\C-c>" 'semantic-complete-analyze-inline) ;; when you typed . or -> after an object name, use this key to show possible public member functions or data members.
+  (local-set-key "\C-c<" 'semantic-ia-fast-jump) ;; jump to the definition of the symbol under cursor
   (local-set-key "\C-c=" 'semantic-decoration-include-visit)  ;; visit the header file under cursor 
   (local-set-key "\C-cj" 'semantic-complete-jump) ;; jump to the definition of the symbol under cursor 
   (local-set-key "\C-cq" 'semantic-ia-show-doc)  ;;  show the document of the symbol under cursor
@@ -58,9 +59,12 @@
   (local-set-key "\C-c-" 'semantic-tag-folding-fold-block) ;; fold the block under cursor
   (local-set-key "\C-c\C-c+" 'semantic-tag-folding-show-all) ;; unfold all
   (local-set-key "\C-c\C-c-" 'semantic-tag-folding-fold-all) ;; fold all
+  (local-set-key "\C-cr" 'semantic-symref)
+  ;; rename local variable under cursor
+  (local-set-key "\C-c\C-r" 'semantic-symref-rename-local-variable)
   (gtags-mode t)
   (local-set-key "\C-cf" 'gtags-find-tag)
- (flyspell-prog-mode)
+  (flyspell-prog-mode)
   )
 (add-hook 'c-mode-common-hook 'my-cedet-hook)
 (add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
@@ -201,8 +205,8 @@
 ;; enforce column size
 (load-file "~/.emacs.d/external/column-enforce-mode.el")
 (require 'column-enforce-mode)
-(add-hook 'c-mode-hook '100-column-rule)
-(add-hook 'c++-mode-hook '100-column-rule)
+(add-hook 'c-mode-common-hook '100-column-rule)
+(add-hook 'c++-mode-common-hook '100-column-rule)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yasnipped and auto-complete config
@@ -219,6 +223,10 @@
 (setq ac-comphist-file (expand-file-name
              "~/.emacs.d/ac-comphist.dat"))
 (ac-config-default)
+
+;; never start automatically
+(setq ac-auto-start nil)
+
 (require 'auto-complete-clang-async)
 
 (require 'ac-math) 
@@ -255,7 +263,7 @@
 (setq ac-auto-start 0)
 (setq ac-auto-show-menu t)
 (setq ac-quick-help-delay 0)
-(setq ac-use-fuzzy 1.5)
+(setq ac-use-fuzzy t)
 (setq ac-show-menu-immediately-on-auto-complete t)
 (setq ac-expand-on-auto-complete nil)
 (setq ac-quick-help-height 20)
@@ -647,6 +655,8 @@ Don't mess with special buffers."
  ;; If there is more than one, they won't work right.
  '(ac-auto-show-menu 1.0)
  '(ac-auto-start 0)
+ '(ac-non-trigger-commands (quote (*table--cell-self-insert-command electric-buffer-list)))
+ '(ac-quick-help-prefer-pos-tip t)
  '(ansi-color-faces-vector [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
  '(column-number-mode t)
@@ -665,17 +675,22 @@ Don't mess with special buffers."
  '(flycheck-clang-language-standard "c++11")
  '(flymake-log-level -1)
  '(flymake-master-file-dirs (quote ("." "./src" "./UnitTest" "~/repo/schlag_git/src/application")))
+ '(global-semantic-idle-summary-mode nil)
  '(magit-gitk-executable nil)
  '(magit-restore-window-configuration nil)
  '(magit-save-some-buffers (quote dontask))
  '(magit-server-window-for-commit nil)
  '(magit-status-buffer-switch-function (quote switch-to-buffer))
  '(make-backup-files nil)
+ '(nxhtml-autoload-web nil t)
  '(openwith-associations (quote (("\\.pdf\\'" "evince" (file)) ("\\.pdf\\'" "evince" (file)) ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file)))))
  '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
  '(org-link-frame-setup (quote ((vm . vm-visit-folder-other-frame) (vm-imap . vm-visit-imap-folder-other-frame) (gnus . org-gnus-no-new-news) (file . find-file) (wl . wl-other-frame))))
  '(powerline-default-separator (quote arrow-fade))
  '(rebox-style-loop (quote (370 243)))
+ '(semantic-complete-inline-analyzer-displayor-class (quote semantic-displayor-tooltip))
+ '(semantic-complete-inline-analyzer-idle-displayor-class (quote semantic-displayor-tooltip))
+ '(semantic-displayor-tooltip-initial-max-tags 5)
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
@@ -703,4 +718,4 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-theme 'sanityinc-solarized-light t)
 
-;;(setup debug-on-error t)
+;;(setq debug-on-error t)
