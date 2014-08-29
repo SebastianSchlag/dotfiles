@@ -227,7 +227,7 @@
 ;; never start automatically
 (setq ac-auto-start nil)
 
-(require 'auto-complete-clang-async)
+;(require 'auto-complete-clang-async)
 
 (require 'ac-math) 
 (add-to-list 'ac-modes 'latex-mode)   ; make auto-complete aware of `latex-mode`
@@ -278,16 +278,16 @@
 (ac-set-trigger-key "<tab>")
 
 
-(defun ac-cc-mode-setup ()
-  (setq ac-clang-complete-executable "~/.emacs.d/external/clang-complete")
-  (setq clang-completion-suppress-error 't)
-  (setq ac-clang-cflags (append '("-std=c++11") ac-clang-cflags))
-  (setq ac-sources '(ac-source-clang-async))
-  (ac-clang-launch-completion-process)
-)
+;; (defun ac-cc-mode-setup ()
+;;   (setq ac-clang-complete-executable "~/.emacs.d/external/clang-complete")
+;;   (setq clang-completion-suppress-error 't)
+;;   (setq ac-clang-cflags (append '("-std=c++11") ac-clang-cflags))
+;;   (setq ac-sources '(ac-source-clang-async))
+;;   (ac-clang-launch-completion-process)
+;; )
 
 (defun my-ac-config ()
-  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+  ;; (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
   (global-auto-complete-mode t))
 
