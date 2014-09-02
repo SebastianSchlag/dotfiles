@@ -19,8 +19,6 @@
 (depends-on "color-theme")
 (depends-on "color-theme-sanityinc-solarized")
 (depends-on "color-theme-solarized")
-(depends-on "company")
-(depends-on "company-c-headers")
 (depends-on "cpputils-cmake")
 (depends-on "dash")
 (depends-on "dired+")
