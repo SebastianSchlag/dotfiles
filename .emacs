@@ -1,3 +1,5 @@
+(server-start)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Load CEDET - taken from: https://gist.github.com/alexott/3930120
 ;; adapted according to: http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
@@ -7,33 +9,29 @@
 (load-file (concat cedet-root-path "cedet-devel-load.el"))
 (add-to-list 'load-path (concat cedet-root-path "contrib"))
 
-;; select which submodes we want to activate
-;; enables automatic bookmarking of tags that you edited, so you can return to them later with the semantic-mrub-switch-tags command;
-(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-;; enables global support for Semanticdb
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
-;; activates automatic parsing of source code in the idle time;
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
-;; activates displaying of possible name completions in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled; 
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode)
-;; activates displaying of information about current tag in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled.
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
-;; activates mode when name of current tag will be shown in top line of buffer;
-(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+;; select which submodes we want to activat
 ;; activates CEDET's context menu that is bound to right mouse button;
 (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode) 
 ;; activates highlighting of first line for current tag (function, class, etc.);
 (add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
-;; enables global support for Semanticdb; 
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
-;; activates use of separate styles for tags decoration. These styles are defined in the semantic-decoration-styles list; 
-;;(add-to-list 'semantic-default-submodes 'global-semantic-decoration-mode)
+;; activates displaying of possible name completions in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled; 
+;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode)
 ;; activates highlighting of local names that are the same as name of tag under cursor
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
-;; shows which elements weren't processed by current parser's rules;
-;;(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
-;; shows changes in the text that weren't processed by incremental parser yet.
-;;(add-to-list 'semantic-default-submodes 'global-semantic-highlight-edits-mode)
+;; activates automatic parsing of source code in the idle time;
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
+;; enables automatic bookmarking of tags that you edited, so you can return to them later with the semantic-mrub-switch-tags command;
+(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
+;(add-to-list 'semantic-default-submodes 'global-semantic-show-parser-state-mode)
+; shows which elements weren't processed by current parser's rules;
+;(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
+;; enables global support for Semanticdb; 
+(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-breadcrumbs-mode)
+;; activates displaying of information about current tag in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled.
+;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
+;; activates mode when name of current tag will be shown in top line of buffer;
+(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
 
 ;; Activate semantic
 (semantic-mode 1)
@@ -48,11 +46,12 @@
 
 ;; customisation of modes
 (defun my-cedet-hook ()
-  (local-set-key [(control return)] 'semantic-ia-complete-symbol) ;; whatever the symbol you are typing, this hot key automatically complete it for you.
-  (local-set-key "\C-c?" 'semantic-ia-complete-symbol-menu) ;; another way to complete the symbol you are typing
+  (local-set-key [(control return)] 'semantic-ia-complete-symbol-menu) ;; whatever the symbol you are typing, this hot key automatically complete it for you.
+  (local-set-key "\C-c?" 'semantic-ia-complete-symbol) ;; another way to complete the symbol you are typing
   (local-set-key "\C-c>" 'semantic-complete-analyze-inline) ;; when you typed . or -> after an object name, use this key to show possible public member functions or data members.
+  (local-set-key "\C-c<" 'semantic-ia-fast-jump) ;; jump to the definition of the symbol under cursor
   (local-set-key "\C-c=" 'semantic-decoration-include-visit)  ;; visit the header file under cursor 
-  (local-set-key "\C-cj" 'semantic-ia-fast-jump) ;; jump to the definition of the symbol under cursor 
+  (local-set-key "\C-cj" 'semantic-complete-jump) ;; jump to the definition of the symbol under cursor 
   (local-set-key "\C-cq" 'semantic-ia-show-doc)  ;;  show the document of the symbol under cursor
   (local-set-key "\C-cs" 'semantic-ia-show-summary) ;; show a summary about the symbol under cursor
   (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle) ;; toggle between the implementation and a prototype of symbol under cursor
@@ -60,6 +59,12 @@
   (local-set-key "\C-c-" 'semantic-tag-folding-fold-block) ;; fold the block under cursor
   (local-set-key "\C-c\C-c+" 'semantic-tag-folding-show-all) ;; unfold all
   (local-set-key "\C-c\C-c-" 'semantic-tag-folding-fold-all) ;; fold all
+  (local-set-key "\C-cr" 'semantic-symref)
+  ;; rename local variable under cursor
+  (local-set-key "\C-c\C-r" 'semantic-symref-rename-local-variable)
+  (gtags-mode t)
+  (local-set-key "\C-cf" 'gtags-find-tag)
+  (flyspell-prog-mode)
   )
 (add-hook 'c-mode-common-hook 'my-cedet-hook)
 (add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
@@ -71,33 +76,33 @@
   (local-set-key "\C-c\C-r" 'semantic-symref)
   )
 (add-hook 'c-mode-common-hook 'alexott/c-mode-cedet-hook)
+(add-hook 'c++-mode-hook 'alexott/c-mode-cedet-hook)
+
+(defun my-c-mode-cedet-hook ()
+  (add-to-list 'ac-sources 'ac-source-gtags)
+  (add-to-list 'ac-sources 'ac-source-semantic))
+(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+(add-hook 'c++-mode-hook 'my-c-mode-cedet-hook)
 
 ;; enable support for gnu global
 (when (cedet-gnu-global-version-check t)
 (semanticdb-enable-gnu-global-databases 'c-mode t)
 (semanticdb-enable-gnu-global-databases 'c++-mode t))
-
-;; enable ctags for some languages
-(when (cedet-ectag-version-check t)
-  (semantic-load-enable-primary-ectags-support))
  
-;; SRecode
-(global-srecode-minor-mode 1)
-
 ;; EDE
 (global-ede-mode 1)
 (ede-enable-generic-projects)
+(semantic-load-enable-code-helpers)
+
+(ede-cpp-root-project "hypergraph-partitioning"
+                      :file "~/repo/schlag_git/CMakeLists.txt"
+		      :include-path '("/src")
+                      )
 
 ;; Integration with imenu
 (defun semantic-imenu-hook ()
   (imenu-add-to-menubar "TAGS"))
 (add-hook 'semantic-init-hooks 'semantic-imenu-hook)
-
-;; auto-complete intrgration
-(defun c-mode-autocomplete-cedet-hook ()
-  (add-to-list 'ac-sources 'ac-source-gtags)
-  (add-to-list 'ac-sources 'ac-source-semantic))
-(add-hook 'c-mode-common-hook 'c-mode-autocomplete-cedet-hook)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Package Management
@@ -198,28 +203,204 @@
 
 ;; enforce column size
 (load-file "~/.emacs.d/external/column-enforce-mode.el")
-(add-hook 'c-mode-hook '100-column-rule)
-(add-hook 'c++-mode-hook '100-column-rule)
+(require 'column-enforce-mode)
+(add-hook 'c-mode-common-hook '100-column-rule)
+(add-hook 'c++-mode-common-hook '100-column-rule)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Flymake
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (require 'cmake-project)
+;; code folding
+;; C-c @ C-c	Command: hs-toggle-hiding  Toggle hiding/showing of a block
+;; C-c @ C-h	Command: hs-hide-block     Select current block at point and hide it
+;; C-c @ C-l	Command: hs-hide-level     Hide all block with indentation levels below this block
+;; C-c @ C-s	Command: hs-show-block     Select current block at point and show it.
+;; C-c @ C-M-h	Command: hs-hide-all       Hide all top level blocks, displaying only first and last lines.
+;; C-c @ C-M-s	Command: hs-show-all       Show everything
+(add-hook 'c-mode-common-hook   'hs-minor-mode)
+
+;; narrowing
+;; C-x n d	Command: narrow-to-defun   Narrow buffer to current function at point
+;; C-x n r/n	Command: narrow-to-region  Narrow buffer to active region
+;; C-x n w	Command: widen             Widen buffer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; yasnipped and auto-complete config
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'yasnippet) ;; should be loaded before auto-complete
+(yas-reload-all)
+(add-hook 'c-mode-common-hook '(lambda () (yas-minor-mode)))
+(add-hook 'c++-mode-hook '(lambda () (yas-minor-mode)))
+
+;; auto-complete
+(require 'cl)
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(setq ac-comphist-file (expand-file-name
+             "~/.emacs.d/ac-comphist.dat"))
+(ac-config-default)
+
+;; never start automatically
+(setq ac-auto-start nil)
+
+;(require 'auto-complete-clang-async)
+
+(require 'ac-math) 
+(add-to-list 'ac-modes 'latex-mode)   ; make auto-complete aware of `latex-mode`
+
+ (defun ac-LaTeX-mode-setup () ; add ac-sources to default ac-sources
+   (setq ac-sources
+         (append '(ac-source-math-unicode ac-source-math-latex ac-source-latex-commands)
+                 ac-sources))
+   )
+(add-hook 'LaTeX-mode-hook 'ac-LaTeX-mode-setup)
+(setq ac-math-unicode-in-math-p t)
+
+(require 'auto-complete-auctex)
+
+
+;; Select candidates with C-n/C-p only when completion menu is displayed:
+(setq ac-use-menu-map t)
+(define-key ac-menu-map "C-n" 'ac-next)
+(define-key ac-menu-map "C-p" 'ac-previous)
+
+(require 'xcscope)
+(setq cscope-index-recursively t)
+
+(setq-default ac-sources '(
+			   ac-source-abbrev 
+			   ac-source-dictionary 
+			   ac-source-words-in-same-mode-buffers 
+			   ac-source-filename 
+			   ac-source-yasnippet)
+)
+
+(setq ac-candidate-limit 100) ;; do not stall with too many results
+(setq ac-auto-start 0)
+(setq ac-auto-show-menu t)
+(setq ac-quick-help-delay 0)
+(setq ac-use-fuzzy t)
+(setq ac-show-menu-immediately-on-auto-complete t)
+(setq ac-expand-on-auto-complete nil)
+(setq ac-quick-help-height 20)
+(setq ac-menu-height 20)
+(define-key ac-mode-map  [(control tab)] 'auto-complete)
+
+
+;;; set the trigger key so that it can work together with yasnippet on tab key,
+;;; if the word exists in yasnippet, pressing tab will cause yasnippet to
+;;; activate, otherwise, auto-complete will
+(ac-set-trigger-key "TAB")
+(ac-set-trigger-key "<tab>")
+
+
+;; (defun ac-cc-mode-setup ()
+;;   (setq ac-clang-complete-executable "~/.emacs.d/external/clang-complete")
+;;   (setq clang-completion-suppress-error 't)
+;;   (setq ac-clang-cflags (append '("-std=c++11") ac-clang-cflags))
+;;   (setq ac-sources '(ac-source-clang-async))
+;;   (ac-clang-launch-completion-process)
+;; )
+
+(defun my-ac-config ()
+  ;; (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+  (add-hook 'auto-complete-mode-hook 'ac-common-setup)
+  (global-auto-complete-mode t))
+
+(my-ac-config)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;set up hunspell for flyspell-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq ispell-program-name "/usr/bin/hunspell")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; load Dired+ when dired is loaded
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'dired-copy-paste)
+
+(define-key dired-mode-map "\C-w" 'dired-copy-paste-do-cut)
+(define-key dired-mode-map "\M-w" 'dired-copy-paste-do-copy)
+(define-key dired-mode-map "\C-z" 'dired-copy-paste-do-paste)
+
+(defun my-dired-mouse-find-file (event)
+  "In dired, visit the file or directory name you click on."
+  (interactive "e")
+  (let (window pos file)
+    (save-excursion
+      (setq window (posn-window (event-end event))
+            pos (posn-point (event-end event)))
+      (if (not (windowp window))
+          (error "No file chosen"))
+      (set-buffer (window-buffer window))
+      (goto-char pos)
+      (setq file (dired-get-file-for-visit)))
+    (if (file-directory-p file)
+        (or (and (cdr dired-subdir-alist)
+                 (dired-goto-subdir file))
+            (progn
+              (select-window window)
+              (dired file)))
+      (select-window window)
+      (find-file (file-name-sans-versions file t)))))
+
+(defun my-dired-terminal (&optional arg)
+  "Launch terminal in current directory."
+  (interactive)
+  ;(start-process "terminal" "*scratch*" "/usr/bin/urxvt")
+  (start-process "terminal" nil "/usr/bin/zsh")
+)
+
+(defun set-my-dired-keys-hook ()
+  "My favorite dired keys."
+  ; for some reason mouse-2 = left click (mouse-1)
+  (define-key dired-mode-map [mouse-2] 'my-dired-mouse-find-file)
+  (define-key dired-mode-map [M-mouse-2] 'diredp-mouse-find-file-other-frame)
+  ; backspace
+  (define-key dired-mode-map [backspace] 'dired-up-directory)
+  ; F4 -> launch terminal
+  (define-key dired-mode-map [f4] 'my-dired-terminal)
+)
+
+(add-hook 'dired-mode-hook 'set-my-dired-keys-hook)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; powerline
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'powerline)
+(powerline-default-theme)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; smartparens default configuration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'smartparens-config)
+(smartparens-global-mode t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; projectile
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-hook 'c-mode-hook 'projectile-mode)
+(add-hook 'c++-mode-hook 'projectile-mode)
+;; let projectile be usable everywhere
+(setq projectile-require-project-root nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cpputils-cmake
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'cpputils-cmake)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (if (derived-mode-p 'c-mode 'c++-mode)
+                (cppcm-reload-all)
+              )))
+;; OPTIONAL, somebody reported that they can use this package with Fortran
+(add-hook 'c90-mode-hook (lambda () (cppcm-reload-all)))
+;; OPTIONAL, avoid typing full path when starting gdb
+(global-set-key (kbd "C-c C-g")
+ '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
+;; OPTIONAL, some users need specify extra flags forwarded to compiler
+(setq cppcm-extra-preprocss-flags-from-user '("-I/usr/src/linux/include" "-DNDEBUG"))
+(setq cppcm-build-dirname "debug")
+
 ;; (require 'flymake)
 ;; (require 'flymake-cursor)
-
-;; (defun maybe-cmake-project-hook ()
-;;   (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
-;; (add-hook 'c-mode-hook 'maybe-cmake-project-hook)
-;; (add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
-
-;; ;; (setq flymake-gui-warnings-enabled nil)
-;; ;; (set-variable 'flymake-start-syntax-check-on-newline nil)
-
-;; (defun maybe-cmake-project-hook ()
-;;   (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
-;; (add-hook 'c-mode-hook 'maybe-cmake-project-hook)
-;; (add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
 
 ;; (defun turn-on-flymake-mode()
 ;;   (if (and (boundp 'flymake-mode) flymake-mode)
@@ -228,60 +409,6 @@
 
 ;; (add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
 ;; (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
-
-;;  (defun cmake-project-current-build-command ()
-;;     "Command line to compile current project as configured in the
-;;   build directory."
-;;     (concat "cmake --build "
-;;             (shell-quote-argument (expand-file-name
-;;                                    cmake-project-build-directory)) " -- -j 1" ))
-
-;; (defun cmake-project-flymake-init ()
-;;     (list (executable-find "cmake")
-;;           (list "--build" (expand-file-name cmake-project-build-directory) "--" "-j" "1" )))
-
-;; ;; --------------------------------
-;; ;; --- Recompile Same Directory ---
-;; ;; --------------------------------
-;; (global-set-key [f5] 'compile-again)
-
-;; (setq compilation-last-buffer nil)
-
-;; (defun compile-again (pfx)
-;;   """Run the same compile as the last time.
-;; If there was no last time, or there is a prefix argument, this acts like
-;; M-x compile.
-;; """
-;;  (interactive "p")
-;;  (if (and (eq pfx 1)
-;; 	  compilation-last-buffer)
-;;      (progn
-;;        (set-buffer compilation-last-buffer)
-;;        (revert-buffer t t))
-;;    (call-interactively 'compile)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; yasnipped and auto-complete config
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'yasnippet) ;; should be loaded before auto-complete
-(yas-global-mode 1)
-
-;; auto-complete
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-(ac-config-default)
-
-;;; set the trigger key so that it can work together with yasnippet on tab key,
-;;; if the word exists in yasnippet, pressing tab will cause yasnippet to
-;;; activate, otherwise, auto-complete will
-(ac-set-trigger-key "TAB")
-(ac-set-trigger-key "<tab>")
-
-;;auto complete and corresponding cedet configuration
-(defun my-c-mode-cedet-hook ()
-  (add-to-list 'ac-sources 'ac-source-gtags)
-  (add-to-list 'ac-sources 'ac-source-semantic-raw))
-(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs-specific options
@@ -379,9 +506,29 @@ Don't mess with special buffers."
 ;; Fast TODO Selection
 (setq org-use-fast-todo-selection t)
 
+
+;;-------------------------------------------------------------------------
+;; Supporting Functions
+;;-------------------------------------------------------------------------
+(require 'org)
+(define-key org-mode-map "\C-cs" 'org-sort)
+
+;; put all temporary files into /tmp
+(defconst emacs-tmp-dir (format "%s/%s%s/" temporary-file-directory "emacs" (user-uid)))
+(setq backup-directory-alist `((".*" . ,emacs-tmp-dir)))
+(setq auto-save-file-name-transforms `((".*" ,emacs-tmp-dir t)))
+(setq auto-save-list-file-prefix emacs-tmp-dir)
+(setq tramp-auto-save-directory emacs-tmp-dir)
+(setq tramp-persistency-file-name (format "%s/tramp" emacs-tmp-dir))
+(setq image-dired-dir (format "%s/image-dired" emacs-tmp-dir))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General Keybindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(global-unset-key (kbd "C-z"))
+(global-set-key (kbd "C-z") 'yank)       ; paste
+
 ;; magit
 (global-set-key (kbd "<C-f12>") 'magit-status)
 ;; cycle through buffers
@@ -421,14 +568,44 @@ Don't mess with special buffers."
 (global-set-key [(meta delete)] 'kill-word)
 (global-set-key [(control delete)] 'dove-forward-kill-word)
 
+(global-set-key (kbd "<C-mouse-4>") 'text-scale-increase)
+(global-set-key (kbd "<C-mouse-5>") 'text-scale-decrease)
+
+(global-set-key [C-x C-b] 'buffer-menu)
+(global-set-key [M-S-up] 'buffer-menu)
+
+(global-set-key [M-S-left] 'previous-buffer)
+(global-set-key [M-S-right] 'next-buffer)
+
+; window handling
+(global-set-key "\M-`" 'delete-other-windows)
+(global-set-key "\M-2" 'new-frame)
+(global-set-key "\M-3" 'delete-frame)
+
+; go to last edit point
+(global-set-key [(ctrl meta l)] 'goto-last-change);
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Smooth Scrolling
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
-;; (require 'smooth-scrolling)
-;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time    
-;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling    
-;; (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-;; (setq scroll-step 1) ;; keyboard scroll one line at a time
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+;; Scroll line by line
+(setq redisplay-dont-pause t)
+;; number of lines at the top and bottom of a window.
+(setq scroll-margin 2)
+;; Controls if scroll commands move point to keep its screen position unchanged.
+(setq scroll-preserve-screen-position nil)   
+(require 'smooth-scrolling)
+ ;; four line at a time
+(setq mouse-wheel-scroll-amount '(4 ((shift) . 4)))
+ ;; accelerate scrolling
+(setq mouse-wheel-progressive-speed 't)
+ ;; scroll window under mouse
+(setq mouse-wheel-follow-mouse 't)
+;; keyboard scroll four line at a time
+(setq scroll-step 4)
+;; number of lines at the top and bottom of a window.
+(setq smooth-scroll-margin 3)
+(setq smooth-scroll-strict-margins 't)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sublime-style multiple cursors
@@ -444,6 +621,14 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
 (require 'fic-mode)
 (add-hook 'c++-mode-hook 'turn-on-fic-mode) 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; svn integration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(autoload 'svn-status "dsvn" "Run `svn status'." t)
+(autoload 'svn-update "dsvn" "Run `svn update'." t)
+
+(global-set-key (kbd "<C-f11>") 'svn-status)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window related shortcuts
@@ -461,52 +646,62 @@ Don't mess with special buffers."
 (global-set-key (kbd "S-C-<up>") 'enlarge-window)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; remember window size and buffers
+;; smex
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; remember size of window
-;; (defun save-framegeometry ()
-;;   "Gets the current frame's geometry and saves to ~/.emacs.d/framegeometry."
-;;   (let (
-;;         (framegeometry-left (frame-parameter (selected-frame) 'left))
-;;         (framegeometry-top (frame-parameter (selected-frame) 'top))
-;;         (framegeometry-width (frame-parameter (selected-frame) 'width))
-;;         (framegeometry-height (frame-parameter (selected-frame) 'height))
-;;         (framegeometry-file (expand-file-name "~/.emacs.d/framegeometry"))
-;;         )
+(require 'ido)
+(ido-mode t)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-;;     (with-temp-buffer
-;;       (insert
-;;        ";;; This is the previous emacs frame's geometry.\n"
-;;        ";;; Last generated " (current-time-string) ".\n"
-;;        "(setq initial-frame-alist\n"
-;;        "      '(\n"
-;;        (format "        (top . %d)\n" (max framegeometry-top 0))
-;;        (format "        (left . %d)\n" (max framegeometry-left 0))
-;;        (format "        (width . %d)\n" (max framegeometry-width 0))
-;;        (format "        (height . %d)))\n" (max framegeometry-height 0)))
-;;       (when (file-writable-p framegeometry-file)
-;;         (write-file framegeometry-file))))
-;;   )
 
-;; (defun load-framegeometry ()
-;;   "Loads ~/.emacs.d/framegeometry which should load the previous frame's geometry."
-;;   (let ((framegeometry-file (expand-file-name "~/.emacs.d/framegeometry")))
-;;     (when (file-readable-p framegeometry-file)
-;;       (load-file framegeometry-file)))
-;;   )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ggtags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; ;; Special work to do ONLY when there is a window system being used
-;; (if window-system
-;;     (progn
-;;       (add-hook 'after-init-hook 'load-framegeometry)
-;;       (add-hook 'kill-emacs-hook 'save-framegeometry))
-;;   )
+(require 'ggtags)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+              (ggtags-mode 1))))
 
-;; eof
+(define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
+(define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
+(define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
+(define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
+(define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
+(define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
 
-;; remember everything else on close
-;;(desktop-save-mode 1) 
-;; additionally store ecb window sizes after adjustment via ecb-store-window-sizes
+(define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark)
+
+(setq-local imenu-create-index-function #'ggtags-build-imenu-index)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; company mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(add-to-list 'company-backends 'company-c-headers)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; clean aindent mode & wsbutler - whitespace handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'clean-aindent-mode)
+(add-hook 'prog-mode-hook 'clean-aindent-mode)
+
+(require 'ws-butler)
+(add-hook 'c-mode-common-hook 'ws-butler-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GDB config
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq gdb-many-windows t  ;; use gdb-many-windows by default
+      gdb-show-main t     ;; Non-nil means display source file containing the main routine at startup
+ )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizations
@@ -518,28 +713,49 @@ Don't mess with special buffers."
  ;; If there is more than one, they won't work right.
  '(ac-auto-show-menu 1.0)
  '(ac-auto-start 0)
+ '(ac-non-trigger-commands (quote (*table--cell-self-insert-command electric-buffer-list)))
+ '(ac-quick-help-prefer-pos-tip t)
  '(ansi-color-faces-vector [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
+ '(column-number-mode t)
  '(compilation-always-kill t)
  '(compilation-scroll-output (quote first-error))
  '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
  '(custom-safe-themes (quote ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
  '(ecb-auto-activate nil)
  '(ecb-layout-name "leftright2")
- '(ecb-layout-window-sizes (quote (("leftright2" (ecb-directories-buffer-name 0.10900473933649289 . 0.6296296296296297) (ecb-sources-buffer-name 0.10900473933649289 . 0.35185185185185186) (ecb-methods-buffer-name 0.14218009478672985 . 0.6296296296296297) (ecb-history-buffer-name 0.14218009478672985 . 0.35185185185185186)))))
+ '(ecb-layout-window-sizes (quote (("leftright2" (ecb-directories-buffer-name 0.0970464135021097 . 0.6333333333333333) (ecb-sources-buffer-name 0.0970464135021097 . 0.35) (ecb-methods-buffer-name 0.14345991561181434 . 0.6333333333333333) (ecb-history-buffer-name 0.14345991561181434 . 0.35)))))
  '(ecb-options-version "2.40")
  '(ecb-prescan-directories-for-emptyness nil)
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
  '(ecb-source-path (quote ("~/repo/" ("/" "/"))))
  '(fci-rule-color "#eee8d5")
+ '(flycheck-clang-language-standard "c++11")
  '(flymake-log-level -1)
+ '(flymake-master-file-dirs (quote ("." "./src" "./UnitTest" "~/repo/schlag_git/src/application")))
+ '(global-semantic-idle-summary-mode nil)
  '(magit-gitk-executable nil)
  '(magit-restore-window-configuration nil)
+ '(magit-save-some-buffers (quote dontask))
  '(magit-server-window-for-commit nil)
  '(magit-status-buffer-switch-function (quote switch-to-buffer))
+ '(make-backup-files nil)
+ '(nxhtml-autoload-web nil t)
+ '(openwith-associations (quote (("\\.pdf\\'" "evince" (file)) ("\\.pdf\\'" "evince" (file)) ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file)))))
  '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
  '(org-link-frame-setup (quote ((vm . vm-visit-folder-other-frame) (vm-imap . vm-visit-imap-folder-other-frame) (gnus . org-gnus-no-new-news) (file . find-file) (wl . wl-other-frame))))
+ '(powerline-default-separator (quote arrow-fade))
+ '(rebox-style-loop (quote (370 243)))
+ '(semantic-complete-inline-analyzer-displayor-class (quote semantic-displayor-tooltip))
+ '(semantic-complete-inline-analyzer-idle-displayor-class (quote semantic-displayor-tooltip))
+ '(semantic-displayor-tooltip-initial-max-tags 5)
  '(show-paren-mode t)
+ '(sp-autodelete-closing-pair nil)
+ '(sp-autodelete-opening-pair nil)
+ '(sp-autodelete-pair nil)
+ '(sp-autoescape-string-quote t)
+ '(sp-autoinsert-quote-if-followed-by-closing-pair t)
+ '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
  '(vc-annotate-background nil)
  '(vc-annotate-color-map (quote ((20 . "#dc322f") (40 . "#cb4b16") (60 . "#b58900") (80 . "#859900") (100 . "#2aa198") (120 . "#268bd2") (140 . "#d33682") (160 . "#6c71c4") (180 . "#dc322f") (200 . "#cb4b16") (220 . "#b58900") (240 . "#859900") (260 . "#2aa198") (280 . "#268bd2") (300 . "#d33682") (320 . "#6c71c4") (340 . "#dc322f") (360 . "#cb4b16"))))
@@ -552,7 +768,10 @@ Don't mess with special buffers."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 128 :width normal :foundry "unknown" :family "Ubuntu Mono"))))
+ '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "unknown" :family "Monaco"))))
+ '(powerline-active1 ((t (:inherit mode-line :background "#93a1a1" :foreground "#657b83"))))
+ '(powerline-inactive1 ((t (:inherit mode-line :background "#93a1a1" :foreground "#657b83"))))
+ '(powerline-inactive2 ((t (:inherit mode-line :background "#eee8d5" :foreground "#657b83"))))
  '(region ((t (:background "gray90"))))
  '(semantic-highlight-edits-face ((t (:background "gray90"))))
  '(yas-field-highlight-face ((t (:background "gray90")))))
@@ -562,7 +781,4 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-theme 'sanityinc-solarized-light t)
 
-;; force restore of window sizes
-;;(run-with-idle-timer 0.2 nil 'ecb-restore-window-sizes)
-
-
+;;(setq debug-on-error t)
