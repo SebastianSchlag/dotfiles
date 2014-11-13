@@ -16,6 +16,7 @@
 (depends-on "clean-aindent-mode")
 (depends-on "cmake-mode")
 (depends-on "cmake-project")
+(depends-on "color-identifiers-mode")
 (depends-on "color-theme")
 (depends-on "color-theme-sanityinc-solarized")
 (depends-on "color-theme-solarized")

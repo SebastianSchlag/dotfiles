@@ -506,6 +506,21 @@ Don't mess with special buffers."
 ;; Fast TODO Selection
 (setq org-use-fast-todo-selection t)
 
+(defun org-archive-all-done-item ()
+  "Archive all item that have with prefix DONE."
+  (interactive)
+  (save-excursion
+    (show-all)
+    (goto-char (point-min))
+    (if (search-forward-regexp "^[\\*]+ DONE" nil t)
+        (progn
+          (goto-char (point-min))
+          (while (search-forward-regexp "^[\\*]+ DONE" nil t)
+            (org-advertized-archive-subtree))
+          (org-display-all-todo-item)
+          (message "Archive finished"))
+      (org-display-all-todo-item)
+      (message "No need to archive"))))
 
 ;;-------------------------------------------------------------------------
 ;; Supporting Functions
