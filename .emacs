@@ -382,6 +382,18 @@
 (setq projectile-require-project-root nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Change unicode font for pretty symbols
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(when (functionp 'set-fontset-font)
+  (set-fontset-font "fontset-default"
+                    'unicode
+                    (font-spec :family "DejaVu Sans Mono"
+                               :width 'normal
+                               :size 12
+                               :weight 'normal)))
+(global-prettify-symbols-mode t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; cpputils-cmake
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'cpputils-cmake)
@@ -410,10 +422,17 @@
 ;; (add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
 ;; (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (toggle-read-only)
+  (ansi-color-apply-on-region (point-min) (point-max))
+  (toggle-read-only))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Git gutter fringe
 ;; Show git diffs in fringe
-;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'git-gutter-fringe)
 
 (global-git-gutter-mode +1)
@@ -611,26 +630,17 @@ Don't mess with special buffers."
 (global-set-key [(ctrl meta l)] 'goto-last-change);
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Smooth Scrolling
+;; Better Scrolling
+;; http://zeekat.nl/articles/making-emacs-work-for-me.html
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
-;; Scroll line by line
-(setq redisplay-dont-pause t)
-;; number of lines at the top and bottom of a window.
-(setq scroll-margin 2)
-;; Controls if scroll commands move point to keep its screen position unchanged.
-(setq scroll-preserve-screen-position nil)   
-(require 'smooth-scrolling)
- ;; four line at a time
-(setq mouse-wheel-scroll-amount '(4 ((shift) . 4)))
- ;; accelerate scrolling
-(setq mouse-wheel-progressive-speed 't)
- ;; scroll window under mouse
+(setq redisplay-dont-pause t
+      scroll-margin 1
+      scroll-step 1
+      scroll-conservatively 10000
+      scroll-preserve-screen-position 1)
+
 (setq mouse-wheel-follow-mouse 't)
-;; keyboard scroll four line at a time
-(setq scroll-step 4)
-;; number of lines at the top and bottom of a window.
-(setq smooth-scroll-margin 3)
-(setq smooth-scroll-strict-margins 't)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sublime-style multiple cursors
@@ -689,9 +699,9 @@ Don't mess with special buffers."
 
 (require 'ggtags)
 (add-hook 'c-mode-common-hook
-          (lambda ()
-            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
-              (ggtags-mode 1))))
+	  (lambda ()
+	    (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+	      (ggtags-mode 1))))
 
 (define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
 (define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
