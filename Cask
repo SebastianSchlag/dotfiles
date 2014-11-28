@@ -37,6 +37,7 @@
 (depends-on "fuzzy")
 (depends-on "ggtags")
 (depends-on "git-commit-mode")
+(depends-on "git-gutter-fringe")
 (depends-on "git-rebase-mode")
 (depends-on "google-c-style")
 (depends-on "goto-last-change")
