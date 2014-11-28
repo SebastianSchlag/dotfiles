@@ -582,6 +582,46 @@ Don't mess with special buffers."
 (add-to-list 'my/org-babel-evaluated-languages 'ditaa)
 (add-to-list 'my/org-babel-evaluated-languages 'plantuml)
 
+(setq org-ditaa-jar-path "~/repo/dotfiles/emacs-plugins/ditaa0_9.jar")
+(setq org-plantuml-jar-path "~/repo/dotfiles/emacs-plugins/plantuml.jar")
+(setq org-startup-with-inline-images t)
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((dot . t)
+   (ditaa . t) 
+   (R . t)))
+(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+
+(defun bh/display-inline-images ()
+  (condition-case nil
+      (org-display-inline-images)
+    (error nil)))
+
+(org-babel-do-load-languages
+ (quote org-babel-load-languages)
+ (quote ((emacs-lisp . t)
+         (dot . t)
+         (ditaa . t)
+         (R . t)
+         (python . t)
+         (ruby . t)
+         (gnuplot . t)
+         (clojure . t)
+         (sh . t)
+         (ledger . t)
+         (org . t)
+         (plantuml . t)
+         (latex . t))))
+
+; Do not prompt to confirm evaluation
+; This may be dangerous - make sure you understand the consequences
+; of setting this -- see the docstring for details
+(setq org-confirm-babel-evaluate nil)
+
+; Use fundamental mode when editing plantuml blocks with C-c '
+(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General Keybindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -791,6 +831,42 @@ Don't mess with special buffers."
       '(kill-ring
         search-ring
         regexp-search-ring))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tweaks from
+;; http://pages.sachachua.com/.emacs.d/Sacha.html
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; visualize undos
+(require 'use-package)
+(use-package undo-tree
+  :init
+  (progn
+    (global-undo-tree-mode)
+    (setq undo-tree-visualizer-timestamps t)
+    (setq undo-tree-visualizer-diff t)))
+
+;; go back to previous position
+(bind-key "C-x p" 'pop-to-mark-command)
+(setq set-mark-command-repeat-pop t)
+
+;; change text size
+(bind-key "C-+" 'text-scale-increase)
+(bind-key "C--" 'text-scale-decrease)
+
+;; shortcut help
+(use-package guide-key
+  :init
+  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c"))
+  (guide-key-mode 1))  ; Enable guide-key-mode
+
+;; kill ring browsing
+(use-package browse-kill-ring
+  :init 
+  (progn 
+    (browse-kill-ring-default-keybindings) ;; M-y
+    (setq browse-kill-ring-quit-action 'save-and-restore)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizations
