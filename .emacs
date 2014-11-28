@@ -380,6 +380,7 @@
 (add-hook 'c++-mode-hook 'projectile-mode)
 ;; let projectile be usable everywhere
 (setq projectile-require-project-root nil)
+(projectile-global-mode +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Change unicode font for pretty symbols
@@ -391,7 +392,7 @@
                                :width 'normal
                                :size 12
                                :weight 'normal)))
-(global-prettify-symbols-mode t)
+(global-prettify-symbols-mode +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; cpputils-cmake
@@ -566,6 +567,20 @@ Don't mess with special buffers."
 (setq tramp-persistency-file-name (format "%s/tramp" emacs-tmp-dir))
 (setq image-dired-dir (format "%s/image-dired" emacs-tmp-dir))
 
+;; http://zeekat.nl/articles/making-emacs-work-for-me.html
+(defvar my/org-babel-evaluated-languages
+  '(emacs-lisp)
+  "List of languages that may be evaluated in Org documents")
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ (mapcar (lambda (lang)
+           (cons lang t))
+         my/org-babel-evaluated-languages))
+(add-to-list 'org-src-lang-modes (quote ("dot" . graphviz-dot)))
+(add-to-list 'my/org-babel-evaluated-languages 'dot)
+(add-to-list 'my/org-babel-evaluated-languages 'ditaa)
+(add-to-list 'my/org-babel-evaluated-languages 'plantuml)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General Keybindings
@@ -854,5 +869,5 @@ Don't mess with special buffers."
 ;; Theme
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-theme 'sanityinc-solarized-light t)
-
+(toggle-frame-fullscreen)
 ;;(setq debug-on-error t)
