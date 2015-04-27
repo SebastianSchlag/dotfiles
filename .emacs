@@ -837,6 +837,7 @@ Don't mess with special buffers."
 ;; Tweaks from
 ;; http://pages.sachachua.com/.emacs.d/Sacha.html
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'use-package)
 
 ;; go back to previous position
 (bind-key "C-x p" 'pop-to-mark-command)
