@@ -44,6 +44,11 @@
 ;; Add additional directories like this:
 (semantic-add-system-include "/usr/local/include/boost" 'c++-mode)
 
+;; if you want to enable support for gnu global
+(when (cedet-gnu-global-version-check t)
+  (semanticdb-enable-gnu-global-databases 'c-mode)
+  (semanticdb-enable-gnu-global-databases 'c++-mode))
+
 ;; customisation of modes
 (defun my-cedet-hook ()
   (local-set-key [(control return)] 'semantic-ia-complete-symbol-menu) ;; whatever the symbol you are typing, this hot key automatically complete it for you.
@@ -850,7 +855,7 @@ Don't mess with special buffers."
 ;; shortcut help
 (use-package guide-key
   :init
-  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c"))
+  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
   (guide-key-mode 1))  ; Enable guide-key-mode
 
 ;; kill ring browsing
