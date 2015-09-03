@@ -1,4 +1,3 @@
-(source melpa)
 (source gnu)
 (source "elpa" "http://tromey.com/elpa/")
 (source marmalade)

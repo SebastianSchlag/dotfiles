@@ -113,17 +113,22 @@
 ;; Package Management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'package)
+(setq package-archives '(("elpa" . "http://tromey.com/elpa/")
+                     ("marmalade" . "https://marmalade-repo.org/packages/")
+                     ("melpa" . "http://melpa.org/packages/")))
+
+
 ;; Add the original Emacs Lisp Package Archive
 (add-to-list 'package-archives
-             '("elpa" . "http://tromey.com/elpa/"))
+             '("elpa" . "http://tromey.com/elpa/") t)
 ;; Add the user-contributed repository
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 ;; Add melpa
-(add-to-list 'package-archives
-  '("melpa" . "http://melpa.milkbox.net/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("melpa" . "http://melpa.org/packages/") t)
 ;; initialize packages
-;(package-initialize)
+(package-initialize)
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
 (require 'pallet)
@@ -399,34 +404,6 @@
                                :weight 'normal)))
 (global-prettify-symbols-mode +1)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; cpputils-cmake
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (require 'cpputils-cmake)
-;; (add-hook 'c-mode-common-hook
-;;           (lambda ()
-;;             (if (derived-mode-p 'c-mode 'c++-mode)
-;;                 (cppcm-reload-all)
-;;               )))
-;; ;; OPTIONAL, somebody reported that they can use this package with Fortran
-;; (add-hook 'c90-mode-hook (lambda () (cppcm-reload-all)))
-;; ;; OPTIONAL, avoid typing full path when starting gdb
-;; (global-set-key (kbd "C-c C-g")
-;;  '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
-;; ;; OPTIONAL, some users need specify extra flags forwarded to compiler
-;; (setq cppcm-extra-preprocss-flags-from-user '("-I/usr/src/linux/include" "-DNDEBUG"))
-;; (setq cppcm-build-dirname "debug")
-
-;; (require 'flymake)
-;; (require 'flymake-cursor)
-
-;; (defun turn-on-flymake-mode()
-;;   (if (and (boundp 'flymake-mode) flymake-mode)
-;;       ()
-;;     (flymake-mode t)))
-
-;; (add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
-;; (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
@@ -645,32 +622,6 @@ Don't mess with special buffers."
 ;;ecb
 (global-set-key (kbd "C-c e") 'ecb-activate)
 (global-set-key (kbd "C-c w") 'ecb-deactivate)
-
-;; bind Backspace and Delete keys with M- and C- to special kill functions
-(defun dove-backward-kill-word (&optional arg)
-  "Backward kill word, but do not insert it into kill-ring"
-  (interactive "P")
-  (let (( end (point) )
-        ( beg (progn (backward-word arg) (point)))
-        )
-    (delete-region beg end)
-    )
-  )
-
-(defun dove-forward-kill-word (&optional arg)
-  "Backward kill word, but do not insert it into kill-ring"
-  (interactive "P")
-  (let (( beg (point) )
-        ( end (progn (forward-word arg) (point)))
-        )
-    (delete-region beg end)
-    )
-  )
-
-(global-set-key [(meta backspace)] 'backward-kill-word)
-(global-set-key [(control backspace)] 'dove-backward-kill-word)
-(global-set-key [(meta delete)] 'kill-word)
-(global-set-key [(control delete)] 'dove-forward-kill-word)
 
 (global-set-key (kbd "<C-mouse-4>") 'text-scale-increase)
 (global-set-key (kbd "<C-mouse-5>") 'text-scale-decrease)
