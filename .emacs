@@ -113,20 +113,20 @@
 ;; Package Management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'package)
-(setq package-archives '(("elpa" . "http://tromey.com/elpa/")
-                     ("marmalade" . "https://marmalade-repo.org/packages/")
-                     ("melpa" . "http://melpa.org/packages/")))
-
-
-;; Add the original Emacs Lisp Package Archive
 (add-to-list 'package-archives
-             '("elpa" . "http://tromey.com/elpa/") t)
+	     '("melpa" . "https://melpa.org/packages/") t)
 ;; Add the user-contributed repository
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
-;; Add melpa
-;; (add-to-list 'package-archives
-;;              '("melpa" . "http://melpa.org/packages/") t)
+             '("marmalade" . "https://marmalade-repo.org/packages/") t)
+
+;; Add the original Emacs Lisp Package Archive
+ (add-to-list 'package-archives
+              '("elpa" . "https://tromey.com/elpa/") t)
+
+(add-to-list 'package-archives
+             '("org" . "https://orgmode.org/elpa/"))
+
+
 ;; initialize packages
 (package-initialize)
 (require 'cask "~/.cask/cask.el")
@@ -262,7 +262,7 @@
 (add-hook 'LaTeX-mode-hook 'ac-LaTeX-mode-setup)
 (setq ac-math-unicode-in-math-p t)
 
-(require 'auto-complete-auctex)
+;(require 'auto-complete-auctex)
 
 
 ;; Select candidates with C-n/C-p only when completion menu is displayed:
@@ -935,4 +935,4 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-theme 'sanityinc-solarized-light t)
 (toggle-frame-fullscreen)
-;;(setq debug-on-error t)
+(setq debug-on-error t)
