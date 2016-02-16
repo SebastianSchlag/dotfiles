@@ -413,6 +413,26 @@
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Magit 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'magit)
+(global-set-key (kbd "<C-f12>") 'magit-status)
+
+;; full screen magit-status
+(defadvice magit-status (around magit-fullscreen activate)
+  (window-configuration-to-register :magit-fullscreen)
+  ad-do-it
+  (delete-other-windows))
+
+(defun magit-quit-session ()
+  "Restores the previous window configuration and kills the magit buffer"
+  (interactive)
+  (kill-buffer)
+  (jump-to-register :magit-fullscreen))
+
+(define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Git gutter fringe
 ;; Show git diffs in fringe
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -610,8 +630,6 @@ Don't mess with special buffers."
 (global-unset-key (kbd "C-z"))
 (global-set-key (kbd "C-z") 'yank)       ; paste
 
-;; magit
-(global-set-key (kbd "<C-f12>") 'magit-status)
 ;; cycle through buffers
 (global-set-key (kbd "<C-tab>") 'bury-buffer)
 ;; duplicate the current line or region
@@ -935,4 +953,4 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-theme 'sanityinc-solarized-light t)
 (toggle-frame-fullscreen)
-(setq debug-on-error t)
+;(setq debug-on-error t)
