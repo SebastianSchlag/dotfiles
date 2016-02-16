@@ -859,7 +859,9 @@ Don't mess with special buffers."
  '(custom-safe-themes
    (quote
     ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
+ '(display-buffer-base-action (quote (display-buffer-same-window)))
  '(ecb-auto-activate nil)
+ '(ecb-ignore-display-buffer-function (quote always))
  '(ecb-layout-name "leftright2")
  '(ecb-layout-window-sizes
    (quote
@@ -875,6 +877,7 @@ Don't mess with special buffers."
  '(fci-rule-color "#eee8d5")
  '(global-semantic-idle-summary-mode nil)
  '(magit-gitk-executable nil)
+ '(magit-popup-display-buffer-action nil)
  '(magit-restore-window-configuration nil)
  '(magit-save-some-buffers (quote dontask))
  '(magit-server-window-for-commit nil)
@@ -908,6 +911,7 @@ Don't mess with special buffers."
  '(sp-autodelete-pair nil)
  '(sp-autoescape-string-quote t)
  '(sp-autoinsert-quote-if-followed-by-closing-pair t)
+ '(temp-buffer-show-function (quote ecb-temp-buffer-show-function-emacs))
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
  '(vc-annotate-background nil)
