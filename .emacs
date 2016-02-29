@@ -44,6 +44,11 @@
 ;; Add additional directories like this:
 (semantic-add-system-include "/usr/local/include/boost" 'c++-mode)
 
+;; if you want to enable support for gnu global
+(when (cedet-gnu-global-version-check t)
+  (semanticdb-enable-gnu-global-databases 'c-mode)
+  (semanticdb-enable-gnu-global-databases 'c++-mode))
+
 ;; customisation of modes
 (defun my-cedet-hook ()
   (local-set-key [(control return)] 'semantic-ia-complete-symbol-menu) ;; whatever the symbol you are typing, this hot key automatically complete it for you.
@@ -108,17 +113,22 @@
 ;; Package Management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'package)
-;; Add the original Emacs Lisp Package Archive
 (add-to-list 'package-archives
-             '("elpa" . "http://tromey.com/elpa/"))
+	     '("melpa" . "https://melpa.org/packages/") t)
 ;; Add the user-contributed repository
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
-;; Add melpa
+             '("marmalade" . "https://marmalade-repo.org/packages/") t)
+
+;; Add the original Emacs Lisp Package Archive
+ (add-to-list 'package-archives
+              '("elpa" . "https://tromey.com/elpa/") t)
+
 (add-to-list 'package-archives
-  '("melpa" . "http://melpa.milkbox.net/packages/") t)
+             '("org" . "https://orgmode.org/elpa/"))
+
+
 ;; initialize packages
-;(package-initialize)
+(package-initialize)
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
 (require 'pallet)
@@ -252,7 +262,7 @@
 (add-hook 'LaTeX-mode-hook 'ac-LaTeX-mode-setup)
 (setq ac-math-unicode-in-math-p t)
 
-(require 'auto-complete-auctex)
+;(require 'auto-complete-auctex)
 
 
 ;; Select candidates with C-n/C-p only when completion menu is displayed:
@@ -380,35 +390,57 @@
 (add-hook 'c++-mode-hook 'projectile-mode)
 ;; let projectile be usable everywhere
 (setq projectile-require-project-root nil)
+(projectile-global-mode +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; cpputils-cmake
+;;; Change unicode font for pretty symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'cpputils-cmake)
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (if (derived-mode-p 'c-mode 'c++-mode)
-                (cppcm-reload-all)
-              )))
-;; OPTIONAL, somebody reported that they can use this package with Fortran
-(add-hook 'c90-mode-hook (lambda () (cppcm-reload-all)))
-;; OPTIONAL, avoid typing full path when starting gdb
-(global-set-key (kbd "C-c C-g")
- '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
-;; OPTIONAL, some users need specify extra flags forwarded to compiler
-(setq cppcm-extra-preprocss-flags-from-user '("-I/usr/src/linux/include" "-DNDEBUG"))
-(setq cppcm-build-dirname "debug")
+(when (functionp 'set-fontset-font)
+  (set-fontset-font "fontset-default"
+                    'unicode
+                    (font-spec :family "DejaVu Sans Mono"
+                               :width 'normal
+                               :size 12
+                               :weight 'normal)))
+(global-prettify-symbols-mode +1)
 
-;; (require 'flymake)
-;; (require 'flymake-cursor)
 
-;; (defun turn-on-flymake-mode()
-;;   (if (and (boundp 'flymake-mode) flymake-mode)
-;;       ()
-;;     (flymake-mode t)))
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (toggle-read-only)
+  (ansi-color-apply-on-region (point-min) (point-max))
+  (toggle-read-only))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-;; (add-hook 'c-mode-common-hook (lambda () (turn-on-flymake-mode)))
-;; (add-hook 'c++-mode-hook (lambda () (turn-on-flymake-mode)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Magit 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'magit)
+(global-set-key (kbd "<C-f12>") 'magit-status)
+
+;; full screen magit-status
+(defadvice magit-status (around magit-fullscreen activate)
+  (window-configuration-to-register :magit-fullscreen)
+  ad-do-it
+  (delete-other-windows))
+
+(defun magit-quit-session ()
+  "Restores the previous window configuration and kills the magit buffer"
+  (interactive)
+  (kill-buffer)
+  (jump-to-register :magit-fullscreen))
+
+(define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Git gutter fringe
+;; Show git diffs in fringe
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'git-gutter-fringe)
+
+(global-git-gutter-mode +1)
+(setq-default indicate-buffer-boundaries 'left)
+(setq-default indicate-empty-lines +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs-specific options
@@ -506,6 +538,21 @@ Don't mess with special buffers."
 ;; Fast TODO Selection
 (setq org-use-fast-todo-selection t)
 
+(defun org-archive-all-done-item ()
+  "Archive all item that have with prefix DONE."
+  (interactive)
+  (save-excursion
+    (show-all)
+    (goto-char (point-min))
+    (if (search-forward-regexp "^[\\*]+ DONE" nil t)
+        (progn
+          (goto-char (point-min))
+          (while (search-forward-regexp "^[\\*]+ DONE" nil t)
+            (org-advertized-archive-subtree))
+          (org-display-all-todo-item)
+          (message "Archive finished"))
+      (org-display-all-todo-item)
+      (message "No need to archive"))))
 
 ;;-------------------------------------------------------------------------
 ;; Supporting Functions
@@ -522,6 +569,60 @@ Don't mess with special buffers."
 (setq tramp-persistency-file-name (format "%s/tramp" emacs-tmp-dir))
 (setq image-dired-dir (format "%s/image-dired" emacs-tmp-dir))
 
+;; http://zeekat.nl/articles/making-emacs-work-for-me.html
+(defvar my/org-babel-evaluated-languages
+  '(emacs-lisp)
+  "List of languages that may be evaluated in Org documents")
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ (mapcar (lambda (lang)
+           (cons lang t))
+         my/org-babel-evaluated-languages))
+(add-to-list 'org-src-lang-modes (quote ("dot" . graphviz-dot)))
+(add-to-list 'my/org-babel-evaluated-languages 'dot)
+(add-to-list 'my/org-babel-evaluated-languages 'ditaa)
+(add-to-list 'my/org-babel-evaluated-languages 'plantuml)
+
+(setq org-ditaa-jar-path "~/repo/dotfiles/emacs-plugins/ditaa0_9.jar")
+(setq org-plantuml-jar-path "~/repo/dotfiles/emacs-plugins/plantuml.jar")
+(setq org-startup-with-inline-images t)
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((dot . t)
+   (ditaa . t) 
+   (R . t)))
+(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+
+(defun bh/display-inline-images ()
+  (condition-case nil
+      (org-display-inline-images)
+    (error nil)))
+
+(org-babel-do-load-languages
+ (quote org-babel-load-languages)
+ (quote ((emacs-lisp . t)
+         (dot . t)
+         (ditaa . t)
+         (R . t)
+         (python . t)
+         (ruby . t)
+         (gnuplot . t)
+         (clojure . t)
+         (sh . t)
+         (ledger . t)
+         (org . t)
+         (plantuml . t)
+         (latex . t))))
+
+; Do not prompt to confirm evaluation
+; This may be dangerous - make sure you understand the consequences
+; of setting this -- see the docstring for details
+(setq org-confirm-babel-evaluate nil)
+
+; Use fundamental mode when editing plantuml blocks with C-c '
+(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General Keybindings
@@ -529,8 +630,6 @@ Don't mess with special buffers."
 (global-unset-key (kbd "C-z"))
 (global-set-key (kbd "C-z") 'yank)       ; paste
 
-;; magit
-(global-set-key (kbd "<C-f12>") 'magit-status)
 ;; cycle through buffers
 (global-set-key (kbd "<C-tab>") 'bury-buffer)
 ;; duplicate the current line or region
@@ -541,32 +640,6 @@ Don't mess with special buffers."
 ;;ecb
 (global-set-key (kbd "C-c e") 'ecb-activate)
 (global-set-key (kbd "C-c w") 'ecb-deactivate)
-
-;; bind Backspace and Delete keys with M- and C- to special kill functions
-(defun dove-backward-kill-word (&optional arg)
-  "Backward kill word, but do not insert it into kill-ring"
-  (interactive "P")
-  (let (( end (point) )
-        ( beg (progn (backward-word arg) (point)))
-        )
-    (delete-region beg end)
-    )
-  )
-
-(defun dove-forward-kill-word (&optional arg)
-  "Backward kill word, but do not insert it into kill-ring"
-  (interactive "P")
-  (let (( beg (point) )
-        ( end (progn (forward-word arg) (point)))
-        )
-    (delete-region beg end)
-    )
-  )
-
-(global-set-key [(meta backspace)] 'backward-kill-word)
-(global-set-key [(control backspace)] 'dove-backward-kill-word)
-(global-set-key [(meta delete)] 'kill-word)
-(global-set-key [(control delete)] 'dove-forward-kill-word)
 
 (global-set-key (kbd "<C-mouse-4>") 'text-scale-increase)
 (global-set-key (kbd "<C-mouse-5>") 'text-scale-decrease)
@@ -586,26 +659,17 @@ Don't mess with special buffers."
 (global-set-key [(ctrl meta l)] 'goto-last-change);
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Smooth Scrolling
+;; Better Scrolling
+;; http://zeekat.nl/articles/making-emacs-work-for-me.html
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
-;; Scroll line by line
-(setq redisplay-dont-pause t)
-;; number of lines at the top and bottom of a window.
-(setq scroll-margin 2)
-;; Controls if scroll commands move point to keep its screen position unchanged.
-(setq scroll-preserve-screen-position nil)   
-(require 'smooth-scrolling)
- ;; four line at a time
-(setq mouse-wheel-scroll-amount '(4 ((shift) . 4)))
- ;; accelerate scrolling
-(setq mouse-wheel-progressive-speed 't)
- ;; scroll window under mouse
+(setq redisplay-dont-pause t
+      scroll-margin 1
+      scroll-step 1
+      scroll-conservatively 10000
+      scroll-preserve-screen-position 1)
+
 (setq mouse-wheel-follow-mouse 't)
-;; keyboard scroll four line at a time
-(setq scroll-step 4)
-;; number of lines at the top and bottom of a window.
-(setq smooth-scroll-margin 3)
-(setq smooth-scroll-strict-margins 't)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sublime-style multiple cursors
@@ -664,9 +728,9 @@ Don't mess with special buffers."
 
 (require 'ggtags)
 (add-hook 'c-mode-common-hook
-          (lambda ()
-            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
-              (ggtags-mode 1))))
+	  (lambda ()
+	    (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+	      (ggtags-mode 1))))
 
 (define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
 (define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
@@ -678,14 +742,6 @@ Don't mess with special buffers."
 (define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark)
 
 (setq-local imenu-create-index-function #'ggtags-build-imenu-index)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; company mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'company)
-(add-hook 'after-init-hook 'global-company-mode)
-(add-to-list 'company-backends 'company-c-headers)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; clean aindent mode & wsbutler - whitespace handling
@@ -703,6 +759,81 @@ Don't mess with special buffers."
       gdb-show-main t     ;; Non-nil means display source file containing the main routine at startup
  )
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Smarter navigation to the beginning of a line
+;; http://emacsredux.com/blog/2013/05/22/smarter-navigation-to-the-beginning-of-a-line/
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun smarter-move-beginning-of-line (arg)
+  "Move point back to indentation of beginning of line.
+
+   Move point to the first non-whitespace character on this line.
+   If point is already there, move to the beginning of the line.
+   Effectively toggle between the first non-whitespace character and
+   the beginning of the line.
+
+   If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+   point reaches the beginning or end of the buffer, stop there."
+  (interactive "^p")
+  (setq arg (or arg 1))
+  
+  ;; Move lines first
+  (when (/= arg 1)
+    (let ((line-move-visual nil))
+      (forward-line (1- arg))))
+  
+  (let ((orig-point (point)))
+    (back-to-indentation)
+    (when (= orig-point (point))
+      (move-beginning-of-line 1))))
+
+;; remap C-a to `smarter-move-beginning-of-line'
+(global-set-key [remap move-beginning-of-line]
+		'smarter-move-beginning-of-line)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; History
+;; http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq savehist-file "~/.emacs.d/savehist")
+(savehist-mode 1)
+(setq history-length t)
+(setq history-delete-duplicates t)
+(setq savehist-save-minibuffer-history 1)
+(setq savehist-additional-variables
+      '(kill-ring
+        search-ring
+        regexp-search-ring))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tweaks from
+;; http://pages.sachachua.com/.emacs.d/Sacha.html
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'use-package)
+
+;; go back to previous position
+(bind-key "C-x p" 'pop-to-mark-command)
+(setq set-mark-command-repeat-pop t)
+
+;; change text size
+(bind-key "C-+" 'text-scale-increase)
+(bind-key "C--" 'text-scale-decrease)
+
+;; shortcut help
+(use-package guide-key
+  :init
+  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
+  (guide-key-mode 1))  ; Enable guide-key-mode
+
+;; kill ring browsing
+(use-package browse-kill-ring
+  :init 
+  (progn 
+    (browse-kill-ring-default-keybindings) ;; M-y
+    (setq browse-kill-ring-quit-action 'save-and-restore)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -713,37 +844,62 @@ Don't mess with special buffers."
  ;; If there is more than one, they won't work right.
  '(ac-auto-show-menu 1.0)
  '(ac-auto-start 0)
- '(ac-non-trigger-commands (quote (*table--cell-self-insert-command electric-buffer-list)))
+ '(ac-non-trigger-commands
+   (quote
+    (*table--cell-self-insert-command electric-buffer-list)))
  '(ac-quick-help-prefer-pos-tip t)
- '(ansi-color-faces-vector [default bold shadow italic underline bold bold-italic bold])
- '(ansi-color-names-vector (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(ansi-color-names-vector
+   (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
  '(column-number-mode t)
  '(compilation-always-kill t)
  '(compilation-scroll-output (quote first-error))
  '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
- '(custom-safe-themes (quote ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
+ '(custom-safe-themes
+   (quote
+    ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
+ '(display-buffer-base-action (quote (display-buffer-same-window)))
  '(ecb-auto-activate nil)
+ '(ecb-ignore-display-buffer-function (quote always))
  '(ecb-layout-name "leftright2")
- '(ecb-layout-window-sizes (quote (("leftright2" (ecb-directories-buffer-name 0.0970464135021097 . 0.6333333333333333) (ecb-sources-buffer-name 0.0970464135021097 . 0.35) (ecb-methods-buffer-name 0.14345991561181434 . 0.6333333333333333) (ecb-history-buffer-name 0.14345991561181434 . 0.35)))))
+ '(ecb-layout-window-sizes
+   (quote
+    (("leftright2"
+      (ecb-directories-buffer-name 0.09663865546218488 . 0.6290322580645161)
+      (ecb-sources-buffer-name 0.09663865546218488 . 0.3548387096774194)
+      (ecb-methods-buffer-name 0.14285714285714285 . 0.6290322580645161)
+      (ecb-history-buffer-name 0.14285714285714285 . 0.3548387096774194)))))
  '(ecb-options-version "2.40")
  '(ecb-prescan-directories-for-emptyness nil)
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
  '(ecb-source-path (quote ("~/repo/" ("/" "/"))))
  '(fci-rule-color "#eee8d5")
- '(flycheck-clang-language-standard "c++11")
- '(flymake-log-level -1)
- '(flymake-master-file-dirs (quote ("." "./src" "./UnitTest" "~/repo/schlag_git/src/application")))
  '(global-semantic-idle-summary-mode nil)
  '(magit-gitk-executable nil)
+ '(magit-popup-display-buffer-action nil)
  '(magit-restore-window-configuration nil)
  '(magit-save-some-buffers (quote dontask))
  '(magit-server-window-for-commit nil)
  '(magit-status-buffer-switch-function (quote switch-to-buffer))
  '(make-backup-files nil)
  '(nxhtml-autoload-web nil t)
- '(openwith-associations (quote (("\\.pdf\\'" "evince" (file)) ("\\.pdf\\'" "evince" (file)) ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file)))))
+ '(openwith-associations
+   (quote
+    (("\\.pdf\\'" "evince"
+      (file))
+     ("\\.pdf\\'" "evince"
+      (file))
+     ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer"
+      ("-idx" file)))))
  '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
- '(org-link-frame-setup (quote ((vm . vm-visit-folder-other-frame) (vm-imap . vm-visit-imap-folder-other-frame) (gnus . org-gnus-no-new-news) (file . find-file) (wl . wl-other-frame))))
+ '(org-link-frame-setup
+   (quote
+    ((vm . vm-visit-folder-other-frame)
+     (vm-imap . vm-visit-imap-folder-other-frame)
+     (gnus . org-gnus-no-new-news)
+     (file . find-file)
+     (wl . wl-other-frame))))
  '(powerline-default-separator (quote arrow-fade))
  '(rebox-style-loop (quote (370 243)))
  '(semantic-complete-inline-analyzer-displayor-class (quote semantic-displayor-tooltip))
@@ -755,10 +911,30 @@ Don't mess with special buffers."
  '(sp-autodelete-pair nil)
  '(sp-autoescape-string-quote t)
  '(sp-autoinsert-quote-if-followed-by-closing-pair t)
+ '(temp-buffer-show-function (quote ecb-temp-buffer-show-function-emacs))
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote post-forward) nil (uniquify))
  '(vc-annotate-background nil)
- '(vc-annotate-color-map (quote ((20 . "#dc322f") (40 . "#cb4b16") (60 . "#b58900") (80 . "#859900") (100 . "#2aa198") (120 . "#268bd2") (140 . "#d33682") (160 . "#6c71c4") (180 . "#dc322f") (200 . "#cb4b16") (220 . "#b58900") (240 . "#859900") (260 . "#2aa198") (280 . "#268bd2") (300 . "#d33682") (320 . "#6c71c4") (340 . "#dc322f") (360 . "#cb4b16"))))
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#dc322f")
+     (40 . "#cb4b16")
+     (60 . "#b58900")
+     (80 . "#859900")
+     (100 . "#2aa198")
+     (120 . "#268bd2")
+     (140 . "#d33682")
+     (160 . "#6c71c4")
+     (180 . "#dc322f")
+     (200 . "#cb4b16")
+     (220 . "#b58900")
+     (240 . "#859900")
+     (260 . "#2aa198")
+     (280 . "#268bd2")
+     (300 . "#d33682")
+     (320 . "#6c71c4")
+     (340 . "#dc322f")
+     (360 . "#cb4b16"))))
  '(vc-annotate-very-old-color nil))
 
 
@@ -780,5 +956,5 @@ Don't mess with special buffers."
 ;; Theme
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-theme 'sanityinc-solarized-light t)
-
-;;(setq debug-on-error t)
+(toggle-frame-fullscreen)
+;(setq debug-on-error t)

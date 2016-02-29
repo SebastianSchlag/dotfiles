@@ -1,3 +1,9 @@
 [submodule "/home/schlag/repo/dotfiles/.zprezto"]
 	path = /home/schlag/repo/dotfiles/.zprezto
 	url = https://github.com/sorin-ionescu/prezto.git
+[submodule "emacs-plugins/nxhtml/emacs-websocket"]
+	path = emacs-plugins/nxhtml/emacs-websocket
+	url = https://github.com/ahyatt/emacs-websocket.git
+[submodule "emacs-plugins/nxhtml/emacs-request"]
+	path = emacs-plugins/nxhtml/emacs-request
+	url = https://github.com/tkf/emacs-request.git
