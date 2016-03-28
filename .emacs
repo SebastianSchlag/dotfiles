@@ -460,6 +460,19 @@
 ;; enable inline images:
 (iimage-mode)
 
+
+(setq global-mark-ring-max 5000         ; increase mark ring to contains 5000 entries
+      mark-ring-max 5000                ; increase kill ring to contains 5000 entries
+      mode-require-final-newline t      ; add a newline to end of file
+      tab-width 4                       ; default to 4 visible spaces to display a tab
+      )
+
+;; GROUP: Editing -> Killing
+(setq kill-ring-max 5000 ; increase kill-ring capacity
+      kill-whole-line t  ; if NIL, kill whole line and move the next line up
+      )
+
+
 ;; treat .h and .hpp files as c++ files
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.hpp\\'" . c++-mode))
