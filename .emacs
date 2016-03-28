@@ -20,14 +20,14 @@
 ;; activates highlighting of local names that are the same as name of tag under cursor
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
 ;; activates automatic parsing of source code in the idle time;
-;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
 ;; enables automatic bookmarking of tags that you edited, so you can return to them later with the semantic-mrub-switch-tags command;
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
 ;(add-to-list 'semantic-default-submodes 'global-semantic-show-parser-state-mode)
 ; shows which elements weren't processed by current parser's rules;
 ;(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
 ;; enables global support for Semanticdb; 
-;;(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-breadcrumbs-mode)
 ;; activates displaying of information about current tag in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled.
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode) 
