@@ -699,6 +699,7 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
 (require 'fic-mode)
 (add-hook 'c++-mode-hook 'turn-on-fic-mode) 
+(add-hook 'emacs-lisp-mode-hook 'turn-on-fic-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; svn integration
@@ -1123,10 +1124,15 @@ Don't mess with special buffers."
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
-
 (when (memq window-system '(mac ns))
 (setq mac-option-key-is-meta nil
       mac-command-key-is-meta t
       mac-command-modifier 'meta
       mac-option-modifier 'none))
+
+(when (memq window-system '(mac ns))
+  (setq ispell-program-name "/usr/local/bin/hunspell"))
+
+
+
 
