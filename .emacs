@@ -1017,10 +1017,13 @@ Don't mess with special buffers."
  '(display-buffer-base-action (quote (display-buffer-same-window)))
  '(ecb-auto-activate nil)
  '(ecb-ignore-display-buffer-function (quote always))
- '(ecb-layout-name "leftright2")
+ '(ecb-layout-name "left-dir-plus-speedbar")
  '(ecb-layout-window-sizes
    (quote
-    (("leftright2"
+    (("left-dir-plus-speedbar"
+      (ecb-directories-buffer-name 0.1339712918660287 . 0.4918032786885246)
+      (ecb-speedbar-buffer-name 0.1339712918660287 . 0.4918032786885246))
+     ("leftright2"
       (ecb-directories-buffer-name 0.09663865546218488 . 0.6290322580645161)
       (ecb-sources-buffer-name 0.09663865546218488 . 0.3548387096774194)
       (ecb-methods-buffer-name 0.14285714285714285 . 0.6290322580645161)
