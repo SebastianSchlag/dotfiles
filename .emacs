@@ -705,8 +705,8 @@ Don't mess with special buffers."
 ;; Highlight ToDos
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
 (require 'fic-mode)
-(add-hook 'c++-mode-hook 'turn-on-fic-mode) 
-(add-hook 'emacs-lisp-mode-hook 'turn-on-fic-mode)
+(add-hook 'prog-mode-hook 'fic-mode)
+(add-hook 'c++-mode-hook 'fic-mode) 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; svn integration
