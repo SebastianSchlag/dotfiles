@@ -386,11 +386,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; projectile
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-hook 'c-mode-hook 'projectile-mode)
-(add-hook 'c++-mode-hook 'projectile-mode)
+;(add-hook 'c-mode-hook 'projectile-mode)
+;(add-hook 'c++-mode-hook 'projectile-mode)
 ;; let projectile be usable everywhere
-(setq projectile-require-project-root nil)
-(projectile-global-mode +1)
+;(setq projectile-require-project-root nil)
+;(projectile-global-mode +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Change unicode font for pretty symbols
@@ -821,19 +821,6 @@ Don't mess with special buffers."
 (bind-key "C-+" 'text-scale-increase)
 (bind-key "C--" 'text-scale-decrease)
 
-;; shortcut help
-(use-package guide-key
-  :init
-  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
-  (guide-key-mode 1))  ; Enable guide-key-mode
-
-;; kill ring browsing
-(use-package browse-kill-ring
-  :init 
-  (progn 
-    (browse-kill-ring-default-keybindings) ;; M-y
-    (setq browse-kill-ring-quit-action 'save-and-restore)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -958,3 +945,11 @@ Don't mess with special buffers."
 (load-theme 'sanityinc-solarized-light t)
 (toggle-frame-fullscreen)
 ;(setq debug-on-error t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; OSX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq mac-option-key-is-meta nil
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'none)
