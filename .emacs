@@ -18,7 +18,7 @@
 ;; activates displaying of possible name completions in the idle time. Requires that global-semantic-idle-scheduler-mode was enabled; 
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode)
 ;; activates highlighting of local names that are the same as name of tag under cursor
-;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
 ;; activates automatic parsing of source code in the idle time;
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
 ;; enables automatic bookmarking of tags that you edited, so you can return to them later with the semantic-mrub-switch-tags command;
