@@ -843,8 +843,11 @@ Don't mess with special buffers."
 
 (add-to-list 'display-buffer-alist
                     `(,(rx bos "*helm" (* not-newline) "*" eos)
-                         (display-buffer-in-side-window)
-                         (inhibit-same-window . t)
+		      ;(display-buffer--maybe-pop-up-frame-or-window)
+		      (display-buffer-below-selected)
+		      ;(display-buffer-at-bottom)
+		      ;(display-buffer-in-side-window)
+		      ;(inhibit-same-window . t)
                          (window-height . 0.5)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1033,10 +1036,13 @@ Don't mess with special buffers."
  '(display-buffer-base-action (quote (display-buffer-same-window)))
  '(ecb-auto-activate nil)
  '(ecb-ignore-display-buffer-function (quote always))
- '(ecb-layout-name "left-dir-plus-speedbar")
+ '(ecb-layout-name "left2")
  '(ecb-layout-window-sizes
    (quote
-    (("left-dir-plus-speedbar"
+    (("left2"
+      (ecb-directories-buffer-name 0.08823529411764706 . 0.4838709677419355)
+      (ecb-sources-buffer-name 0.08823529411764706 . 0.5))
+     ("left-dir-plus-speedbar"
       (ecb-directories-buffer-name 0.08823529411764706 . 0.5)
       (ecb-speedbar-buffer-name 0.08823529411764706 . 0.4838709677419355))
      ("leftright2"
