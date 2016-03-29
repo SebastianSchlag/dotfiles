@@ -1035,8 +1035,8 @@ Don't mess with special buffers."
  '(ecb-layout-window-sizes
    (quote
     (("left-dir-plus-speedbar"
-      (ecb-directories-buffer-name 0.1339712918660287 . 0.4918032786885246)
-      (ecb-speedbar-buffer-name 0.1339712918660287 . 0.4918032786885246))
+      (ecb-directories-buffer-name 0.08823529411764706 . 0.5)
+      (ecb-speedbar-buffer-name 0.08823529411764706 . 0.4838709677419355))
      ("leftright2"
       (ecb-directories-buffer-name 0.09663865546218488 . 0.6290322580645161)
       (ecb-sources-buffer-name 0.09663865546218488 . 0.3548387096774194)
