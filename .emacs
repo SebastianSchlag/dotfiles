@@ -134,6 +134,8 @@
 (cask-initialize)
 (require 'pallet)
 
+(require 'auto-install)
+
 ;; packages not handled by cask/pallet are stored in dotfile repo and should be
 ;; symlinked to this directory
 (add-to-list 'load-path "~/.emacs.d/external")
