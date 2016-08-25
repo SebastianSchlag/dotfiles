@@ -1018,11 +1018,14 @@ Don't mess with special buffers."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ac-auto-show-menu 1.0)
- '(ac-auto-start 0)
+ '(ac-auto-start nil)
  '(ac-non-trigger-commands
    (quote
     (*table--cell-self-insert-command electric-buffer-list)))
  '(ac-quick-help-prefer-pos-tip t)
+ '(ac-trigger-commands-on-completing
+   (quote
+    (autopair-backspace paredit-backward-delete paredit-backward-delete-word)))
  '(ansi-color-faces-vector
    [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector
