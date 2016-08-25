@@ -922,6 +922,7 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'clean-aindent-mode)
 (add-hook 'prog-mode-hook 'clean-aindent-mode)
+(global-set-key (kbd "RET") 'newline-and-indent)  ; automatically indent when press RET
 
 (require 'ws-butler)
 (add-hook 'c-mode-common-hook 'ws-butler-mode)
@@ -938,14 +939,14 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; company
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'company)
-(add-hook 'after-init-hook 'global-company-mode)
-;(delete 'company-semantic company-backends)
-(define-key c-mode-map  [(tab)] 'company-complete)
-(define-key c++-mode-map  [(tab)] 'company-complete)
+;; (require 'company)
+;; (add-hook 'after-init-hook 'global-company-mode)
+;; ;(delete 'company-semantic company-backends)
+;; (define-key c-mode-map  [(tab)] 'company-complete)
+;; (define-key c++-mode-map  [(tab)] 'company-complete)
 
-;; company-c-headers
-(add-to-list 'company-backends 'company-c-headers)
+;; ;; company-c-headers
+;; (add-to-list 'company-backends 'company-c-headers)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Smarter navigation to the beginning of a line
@@ -1027,6 +1028,7 @@ Don't mess with special buffers."
  '(ansi-color-names-vector
    (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
  '(column-number-mode t)
+ '(company-auto-complete-chars (quote (46)))
  '(compilation-always-kill t)
  '(compilation-scroll-output (quote first-error))
  '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
