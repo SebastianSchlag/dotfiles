@@ -96,14 +96,14 @@
 (semanticdb-enable-gnu-global-databases 'c++-mode t))
  
 ;; EDE
-(global-ede-mode 1)
-(ede-enable-generic-projects)
+;; (global-ede-mode 1)
+;; (ede-enable-generic-projects)
 (semantic-load-enable-code-helpers)
 
-(ede-cpp-root-project "hypergraph-partitioning"
-                      :file "~/repo/schlag_git/CMakeLists.txt"
-		      :include-path '("/src")
-                      )
+;; (ede-cpp-root-project "hypergraph-partitioning"
+;;                       :file "~/repo/kahypar/CMakeLists.txt"
+;; 		      :include-path '("/kahypar")
+;;                       )
 
 ;; Integration with imenu
 (defun semantic-imenu-hook ()
@@ -1032,18 +1032,14 @@ Don't mess with special buffers."
  '(ac-trigger-commands-on-completing
    (quote
     (autopair-backspace paredit-backward-delete paredit-backward-delete-word)))
- '(ansi-color-faces-vector
-   [default bold shadow italic underline bold bold-italic bold])
- '(ansi-color-names-vector
-   (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
  '(column-number-mode t)
  '(company-auto-complete-chars (quote (46)))
  '(compilation-always-kill t)
  '(compilation-scroll-output (quote first-error))
- '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
+ '(custom-enabled-themes (quote (gruvbox)))
  '(custom-safe-themes
    (quote
-    ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
+    ("d320493111089afba1563bc3962d8ea1117dd2b3abb189aeebdc8c51b5517ddb" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
  '(display-buffer-base-action (quote (display-buffer-same-window)))
  '(ecb-auto-activate nil)
  '(ecb-ignore-display-buffer-function (quote always))
@@ -1091,6 +1087,9 @@ Don't mess with special buffers."
      (gnus . org-gnus-no-new-news)
      (file . find-file)
      (wl . wl-other-frame))))
+ '(package-selected-packages
+   (quote
+    (cmake-font-lock gruvbox-theme yasnippet yaml-mode xcscope ws-butler use-package smartparens powerline pallet multiple-cursors magit helm-swoop helm-gtags google-c-style git-gutter-fringe ggtags fic-mode exec-path-from-shell ecb-snapshot clean-aindent-mode auto-install ac-math)))
  '(popwin:special-display-config
    (quote
     (("*Miniedit Help*" :noselect t)
@@ -1152,23 +1151,23 @@ Don't mess with special buffers."
 
 
 ;; adapt region and highlight face to match theme
-(custom-set-faces
+;;(custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "unknown" :family "Monaco"))))
- '(powerline-active1 ((t (:inherit mode-line :background "#93a1a1" :foreground "#657b83"))))
- '(powerline-inactive1 ((t (:inherit mode-line :background "#93a1a1" :foreground "#657b83"))))
- '(powerline-inactive2 ((t (:inherit mode-line :background "#eee8d5" :foreground "#657b83"))))
- '(region ((t (:background "gray90"))))
- '(semantic-highlight-edits-face ((t (:background "gray90"))))
- '(yas-field-highlight-face ((t (:background "gray90")))))
+ ;; '(default ((t (:inherit nil :stipple nil :background "#fdf6e3" :foreground "#657b83" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "unknown" :family "Monaco"))))
+ ;; '(powerline-active1 ((t (:inherit mode-line :background "#93a1a1" :foreground "#657b83"))))
+ ;; '(powerline-inactive1 ((t (:inherit mode-line :background "#93a1a1" :foreground "#657b83"))))
+ ;; '(powerline-inactive2 ((t (:inherit mode-line :background "#eee8d5" :foreground "#657b83"))))
+ ;; '(region ((t (:background "gray90"))))
+ ;; '(semantic-highlight-edits-face ((t (:background "gray90"))))
+ ;; '(yas-field-highlight-face ((t (:background "gray90")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Theme
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(load-theme 'sanityinc-solarized-light t)
+(load-theme 'gruvbox t)
 (toggle-frame-fullscreen)
 ;(setq debug-on-error t)
 
@@ -1190,3 +1189,9 @@ Don't mess with special buffers."
 
 
 
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ecb-default-highlight-face ((t (:background "dark cyan")))))
