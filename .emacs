@@ -1368,8 +1368,8 @@ Don't mess with special buffers."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; OSX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
+;; (when (memq window-system '(mac ns))
+;;   (exec-path-from-shell-initialize))
 
 (when (memq window-system '(mac ns))
 (setq mac-option-key-is-meta nil
@@ -1378,8 +1378,12 @@ Don't mess with special buffers."
       mac-option-modifier 'none))
 
 (when (memq window-system '(mac ns))
-  (setq ispell-program-name "/usr/local/bin/hunspell"))
-
+  (setq ispell-program-name "/usr/local/bin/hunspell")
+  (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))  
+  (setq exec-path (append exec-path '("/Library/TeX/texbin/")))
+  (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+(setq TeX-view-program-list
+     '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))))
 
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2017/bin/x86_64-linux/"))  
 (setq exec-path (append exec-path '("/usr/local/texlive/2017/bin/x86_64-linux/")))
