@@ -255,18 +255,18 @@ end)
 -- }}} Network widget
 
 -- {{{ Battery widget
-local baticon = wibox.widget.imagebox(beautiful.widget_baticon)
+-- local baticon = wibox.widget.imagebox(beautiful.widget_baticon)
 -- initialize battery text
-local battext = wibox.widget.textbox()
-local bat_tooltip = awful.tooltip({ objects = { baticon, battext } })
-function process_battext(widget, args)
+-- local battext = wibox.widget.textbox()
+-- local bat_tooltip = awful.tooltip({ objects = { baticon, battext } })
+-- function process_battext(widget, args)
     --if bat_tooltip.visible then
-        bat_tooltip:set_markup("Time remaining: " .. args[3] .. ", wear " .. args[4])
+--         bat_tooltip:set_markup("Time remaining: " .. args[3] .. ", wear " .. args[4])
     --end
-    return "<span color='#e00000'>" .. args[1] .. args[2] .. "%</span>"
-end
-vicious.register(battext, vicious.widgets.bat, process_battext, 10, "BAT1")
-vicious.cache(vicious.widgets.bat)
+--     return "<span color='#e00000'>" .. args[1] .. args[2] .. "%</span>"
+-- end
+-- vicious.register(battext, vicious.widgets.bat, process_battext, 10, "BAT1")
+-- vicious.cache(vicious.widgets.bat)
 -- }}} Battery widget
 
 -- {{{ Volume widget
@@ -396,8 +396,8 @@ for s = 1, screen.count() do
         right_layout:add(neticon)
         right_layout:add(netwidget)
         right_layout:add(separator)
-        right_layout:add(baticon)
-        right_layout:add(battext)
+--        right_layout:add(baticon)
+--        right_layout:add(battext)
         right_layout:add(separator)
         right_layout:add(volicon)
         right_layout:add(volwidget)
