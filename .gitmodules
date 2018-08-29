@@ -7,3 +7,6 @@
 [submodule "emacs-plugins/nxhtml/emacs-request"]
 	path = emacs-plugins/nxhtml/emacs-request
 	url = https://github.com/tkf/emacs-request.git
+[submodule "emacs-plugins/lsp-mode"]
+	path = emacs-plugins/lsp-mode
+	url = https://github.com/emacs-lsp/lsp-mode.git
