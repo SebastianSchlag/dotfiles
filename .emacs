@@ -186,7 +186,7 @@
 ;;Create Header Guards with f12
 (global-set-key [f12] 
   		'(lambda () 
-  		   (interactive)
+  		   (called-interactively)
   		   (if (buffer-file-name)
   		       (let*
   			   ((fName (upcase (file-name-nondirectory (file-name-sans-extension buffer-file-name))))
@@ -344,7 +344,7 @@
 
 (defun my-dired-mouse-find-file (event)
   "In dired, visit the file or directory name you click on."
-  (interactive "e")
+  (called-interactively "e")
   (let (window pos file)
     (save-excursion
       (setq window (posn-window (event-end event))
@@ -365,7 +365,7 @@
 
 (defun my-dired-terminal (&optional arg)
   "Launch terminal in current directory."
-  (interactive)
+  (called-interactively)
   ;(start-process "terminal" "*scratch*" "/usr/bin/urxvt")
   (start-process "terminal" nil "/usr/bin/zsh")
 )
@@ -439,7 +439,7 @@
 
 (defun magit-quit-session ()
   "Restores the previous window configuration and kills the magit buffer"
-  (interactive)
+  (called-interactively)
   (kill-buffer)
   (jump-to-register :magit-fullscreen))
 
@@ -493,7 +493,7 @@
 (defun kill-other-buffers ()
   "Kill all buffers but the current one.
 Don't mess with special buffers."
-  (interactive)
+  (called-interactively)
   (dolist (buffer (buffer-list))
     (unless (or (eql buffer (current-buffer)) (not (buffer-file-name buffer)))
       (kill-buffer buffer))))
@@ -566,7 +566,7 @@ Don't mess with special buffers."
 
 (defun org-archive-all-done-item ()
   "Archive all item that have with prefix DONE."
-  (interactive)
+  (called-interactively)
   (save-excursion
     (show-all)
     (goto-char (point-min))
@@ -1057,7 +1057,6 @@ Don't mess with special buffers."
  '(TeX-source-correlate-method (quote synctex))
  '(TeX-source-correlate-mode t)
  '(TeX-source-correlate-start-server t)
- ;; '(TeX-view-program-list (quote (("Okular" "okular --unique %o#src:%n%b"))))
  '(TeX-view-program-selection
    (quote
     ((engine-omega "dvips and gv")
@@ -1076,7 +1075,7 @@ Don't mess with special buffers."
  '(ansi-color-faces-vector
    [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector
-   (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
+   (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#073642"))
  '(bibtex-comma-after-last-field t)
  '(bibtex-entry-format
    (quote
@@ -1089,7 +1088,7 @@ Don't mess with special buffers."
  '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
  '(custom-safe-themes
    (quote
-    ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
+    ("2a998a3b66a0a6068bcb8b53cd3b519d230dd1527b07232e54c8b9d84061d48d" "16dd114a84d0aeccc5ad6fd64752a11ea2e841e3853234f19dc02a7b91f5d661" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" default)))
  '(display-buffer-base-action (quote (display-buffer-same-window)))
  '(ecb-auto-activate nil)
  '(ecb-ignore-display-buffer-function (quote always))
@@ -1149,7 +1148,7 @@ Don't mess with special buffers."
      (wl . wl-other-frame))))
  '(package-selected-packages
    (quote
-    (helm-flymake auctex-lua gtags yasnippet yaml-mode xcscope ws-butler use-package smartparens powerline pallet multiple-cursors magit helm-swoop helm-gtags google-c-style git-gutter-fringe ggtags fic-mode color-theme-sanityinc-solarized clean-aindent-mode ac-math)))
+    (base16-theme ssh markdown-mode+ cpputils-cmake cmake-font-lock helm-ag helm-flymake auctex-lua gtags yasnippet yaml-mode xcscope ws-butler use-package smartparens powerline pallet multiple-cursors magit helm-swoop helm-gtags google-c-style git-gutter-fringe ggtags fic-mode color-theme-sanityinc-solarized clean-aindent-mode ac-math)))
  '(popwin:special-display-config
    (quote
     (("*Miniedit Help*" :noselect t)
@@ -1246,20 +1245,20 @@ Don't mess with special buffers."
 
 (defun my-latex-key-bindings ()
   "Add some latex macro keys"
-  (interactive)
+  (called-interactively)
   (turn-on-reftex)
   (visual-line-mode 1)
-  (local-set-key "\C-\M-o" (lambda () (interactive) (insert "\\operatorname{")))
-  (local-set-key [M-S-down] (lambda () (interactive) (reftex-toc)))
-  (local-set-key "\C-\M-r" (lambda () (interactive) (reftex-reference)))
-  (local-set-key "\C-\M-c" (lambda () (interactive) (reftex-citation)))
+  (local-set-key "\C-\M-o" (lambda () (called-interactively) (insert "\\operatorname{")))
+  (local-set-key [M-S-down] (lambda () (called-interactively) (reftex-toc)))
+  (local-set-key "\C-\M-r" (lambda () (called-interactively) (reftex-reference)))
+  (local-set-key "\C-\M-c" (lambda () (called-interactively) (reftex-citation)))
   ;; show frames in section list -> very useful for beamer presentations
   (setq reftex-section-levels
         (cons '("begin{frame}" . 3) reftex-section-levels))
   ;; The following makes \C-c\C-c not ask, just do the default action. Adds C-c-a for asking
   (setq TeX-command-force "LaTeX")
   ;; 'a' for ask, change to anything you want
-  (local-set-key "\C-c\C-a" (lambda (arg) (interactive "P")
+  (local-set-key "\C-c\C-a" (lambda (arg) (called-interactively "P")
                             (let ((TeX-command-force nil)) (TeX-command-master arg))))
   ;; auto folding of tikzpicture and algorithm environments in tex files
   (TeX-fold-mode 0)
@@ -1388,3 +1387,12 @@ Don't mess with special buffers."
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2017/bin/x86_64-linux/"))  
 (setq exec-path (append exec-path '("/usr/local/texlive/2017/bin/x86_64-linux/")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Theme
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'ssh)
+    (add-hook 'ssh-mode-hook
+              (lambda ()
+                (setq ssh-directory-tracking-mode t)
+                (shell-dirtrack-mode t)
+                (setq dirtrackp nil)))
